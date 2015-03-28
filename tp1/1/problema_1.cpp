@@ -1,5 +1,7 @@
 #include "problema_1.h"
 
+#define SPACE " "
+
 using namespace std;
 
 int main(){
@@ -14,7 +16,7 @@ int main(){
 		cities[i].cost = cost > 0 ? cost : 0;
 	}
 
-	sort(cities, compare_cities_cost);
+	sort(cities.begin(), cities.end(), compare_cities_cost);
 
 
 	for(int i = 0; i < n; i++){
@@ -27,16 +29,19 @@ int main(){
 		}
 		//cout << cities[i].id << "\t" << cities[i].z << "\t" << cities[i].s << "\t" << cities[i].c << "\t" << cities[i].cost << "\t" << cities[i].saveable << endl;
 	}
-	cout << C << " ";
+	cout << C << SPACE;
+
+	sort(cities.begin(), cities.end(), compare_cities_id);
 
 	for(int i = 0; i < n; i++){
 		if(cities[i].saveable){
-			cout << cities[i].cost / cities[i].c;
+			int sold = ((int)ceil(((double) cities[i].z)/10) - cities[i].s);
+			cout << (sold > 0 ? sold : 0);
 		}else{
 			cout << "0";
 		}
 		if(i != n - 1){
-			cout << " ";
+			cout << SPACE;
 		}else{
 			cout << "\n";
 		}

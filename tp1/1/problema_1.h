@@ -1,6 +1,8 @@
-#include "sort.h"
+
 #include <iostream>
 #include <cmath>
+#include <algorithm>
+#include <vector>
 
 struct City{
 	int z, s, c, cost, id;
