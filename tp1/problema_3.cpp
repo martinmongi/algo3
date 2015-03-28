@@ -18,8 +18,7 @@ int main(){
 		cin >> x >> y;
 		x--;
 		y--;
-		board[x][y] = 2;
-		
+		add_horse(board,x,y,OLD_HORSE);
 	}
 }
 
@@ -39,4 +38,11 @@ void set_square(vector<vector<unsigned char>> &board, int x, int y){
 	n = board.size();
 	if(x >= 0 && x < n && y >= 0 && y < n)
 		board[x][y] = THREATENED;
+}
+
+void print_board(vector<vector<unsigned char>> &board){
+	int n = board.size();
+	for(int i = 0; i < n; i++){
+		
+	}
 }
