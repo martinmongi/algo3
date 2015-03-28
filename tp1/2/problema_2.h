@@ -1,9 +1,8 @@
-#include "sort.h"
 #include <iostream>
 #include <cmath>
+#include <vector>
 
-#define SET 1
-#define RESET 0
+using namespace std;
 
 struct Frequency{
 	int i, f, cost, id;
