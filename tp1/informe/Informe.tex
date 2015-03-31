@@ -1,0 +1,111 @@
+\documentclass[a4paper, 11pt]{report}
+\usepackage{etex}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{caratula}
+\usepackage[spanish, activeacute]{babel}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage[width=15.5cm, left=3cm, top=2.5cm, height= 24.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+%\usepackage[T1]{fontenc} esto esta rompiendo mi wc falta un sty o un package ubuntu?
+\usepackage{textcomp}
+\usepackage{cmap}
+\usepackage{listings}
+\usepackage[all]{xy}
+\usepackage{multicol}
+\usepackage{subfig}
+\usepackage[ruled,vlined, linesnumbered, resetcount]{algorithm2e} % Para el Pseudocodigo
+\usepackage{algorithmic}
+\usepackage{cancel}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{verbatim}
+\usepackage{color}
+\usepackage[pdfborder={0,0,0}]{hyperref}
+\setcounter{secnumdepth}{3} %%agrego subsubsection
+\usepackage{pseudocode}
+
+
+
+\newcommand{\func}[2]{\texttt{#1}(#2)\\}
+\newcommand{\tab}{\hspace*{3em}}
+\newcommand{\RET}{\textbf{return }}
+\newcommand{\MOD}{\textbf{ \% }}
+\newcommand{\tOde}[1]{\tab \small{O($#1$)}}
+\newcommand{\Ode}[1]{O($#1$)}
+\newcommand{\Omegade}[1]{\small{$\Omega$($#1$)}}
+\newcommand{\VSP}{\vspace*{3em}}
+\newcommand{\Pa}{\vspace{5mm}}
+
+
+%%%%%%%%%%%%%% ALGUNAS MACROS %%%%%%%%%%%%%%
+% For \url{SOME_URL}, links SOME_URL to the url SOME_URL
+\providecommand*\url[1]{\href{#1}{#1}}
+
+\setlength{\parskip}{10pt plus 1pt minus 1pt}
+\usepackage{tikz}
+\def\checkmark{\tikz\fill[scale=0.4](0,.35) -- (.25,0) -- (1,.7) -- (.25,.15) -- cycle;}
+
+% Same as above, but pretty-prints SOME_URL in teletype fixed-width font
+\renewcommand*\url[1]{\href{#1}{\texttt{#1}}}
+
+% Comando para poner el simbolo de Reales
+\newcommand{\real}{\hbox{\bf R}}
+
+\providecommand*\code[1]{\texttt{#1}}
+
+%uso: \ponerGrafico{file}{caption}{scale}{label}
+\newcommand{\ponerGrafico}[4]
+{\begin{figure}[H]
+	\centering
+	\subfloat{\includegraphics[scale=#3]{#1}}
+	\caption{#2} \label{fig:#4}
+\end{figure}
+}
+
+\renewcommand{\algorithmiccomment}[1]{\hfill #1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\materia{Algoritmos y Estructuras de Datos III}
+
+\titulo{Trabajo práctico N° 1}
+%\fecha{fecha de entrega}
+%\grupo{Nro grupo}
+\integrante{Integrante1}{001/00}{blablabla@gmail.com}
+\integrante{Integrante2}{002/00}{blablabla@gmail.com}
+\integrante{Integrante4}{003/00}{hhhh@gmail.com}
+\integrante{blablabla}{004/00}{lllll.nm@gmail.com}
+
+\include{templates}
+
+% Donde dice \chapter quiero que aparezca Problema en lugar de Capitulo
+\addto\captionsspanish{% esto lo necesito porque uso babel
+  \renewcommand{\chaptername}%
+    {Problema}%
+}
+
+\begin{document}
+\pagestyle{myheadings}
+\maketitle
+
+
+\thispagestyle{empty}
+\tableofcontents
+
+ \newpage
+ \chapter{Zombieland}
+ \input{ejercicios/problema1.tex}
+
+ \newpage
+ \chapter{Alta Frecuencia}
+ \input{ejercicios/problema2.tex}
+
+\newpage
+\chapter{El Señor de los Caballos}
+\input{ejercicios/problema3.tex}
+
+
+\end{document}

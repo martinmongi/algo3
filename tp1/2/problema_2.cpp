@@ -86,13 +86,16 @@ vector<Frequency> merge_frequencies(vector<Frequency> &a, vector<Frequency> &b){
 
 	int offset_a = 0, offset_b = 0;
 	
-	while(offset_a < na && offset_b < nb){
+	//***********************************dejo comentado el while anterior****************************//
+	
+	/*while(offset_a < na && offset_b < nb){
 	//cout << "freqs: " << out_a[offset_a].id << SPACE << out_a[offset_a].i << SPACE << out_a[offset_a].f << endl; 
 	//cout << "freqs: " << out_b[offset_b].id << SPACE << out_b[offset_b].i << SPACE << out_b[offset_b].f << endl; 
+			
 		if(out_a[offset_a].cost > out_b[offset_b].cost){
-
+	
 			if(out_a[offset_a].i >= out_b[offset_b].i){
-
+	
 				if(out_a[offset_a].f > out_b[offset_b].f){ //opcion 1 y 4
 					//cout << "branch 1" << endl;
 					out.push_back(out_b[offset_b]);
@@ -132,6 +135,89 @@ vector<Frequency> merge_frequencies(vector<Frequency> &a, vector<Frequency> &b){
 					//cout << "branch 6" << endl;
 					out.push_back(wait);
 					out_b[offset_b].i = out_a[offset_a].i; 
+			}
+		}
+	}
+	*/
+//*******************************************************************************************************************************+	
+		
+	
+	while(offset_a < na && offset_b < nb){
+	//cout << "freqs: " << out_a[offset_a].id << SPACE << out_a[offset_a].i << SPACE << out_a[offset_a].f << endl; 
+	//cout << "freqs: " << out_b[offset_b].id << SPACE << out_b[offset_b].i << SPACE << out_b[offset_b].f << endl; 
+	//de aca en adelante me refiero a cada frecuencia como 'a' y 'b' a los elementos de out_a y out_b respectivamente actualmente iterados
+		
+		if(out_a[offset_a].cost > out_b[offset_b].cost){
+		//si la frecuencia del elemento de b es mas barata:
+			if(out_a[offset_a].i >= out_b[offset_b].i){
+			//si inicio de b es menor o igual que inicio de a (a esta altura ya sé que me conviene usar la frecuencia b)
+				if(out_a[offset_a].f > out_b[offset_b].f){ //opcion 1 y 4
+				//si final de a es mayor que final de b:
+					//cout << "branch 1" << endl;
+					out.push_back(out_b[offset_b]);
+					//el final de la frecuencia dependera de comparar el final de b con el inicio de a
+					if(out_a[offset_a].i <= out_b[offset_b].f){
+						out_a[offset_a].i = out_b[offset_b].f;
+					}
+					offset_b++;
+				} else {
+				//si el final de a es menor igual que el final de b
+					//cout << "branch 2" << endl;
+					out.push_back(out_b[offset_b]); //opcion 2,3,5 y 6
+					offset_a++;
+					offset_b++;
+				}
+			} else { //opcion 7, 8 y 9
+					Frequency wait = out_a[offset_a];
+					//cout << "branch 3" << endl;
+					//nuevamente el final de la nueva frecuencia dependera de la comparacion
+					if(out_a[offset_a].f >=	out_b[offset_b].i){
+						wait.f = out_b[offset_b].i;
+						if(out_a[offset_a].f >	out_b[offset_b].i){out_a[offset_a].i = out_b[offset_b].i;}
+						if(out_a[offset_a].f =	out_b[offset_b].i){offset_a++;}
+					}else{
+						offset_a++;
+					}
+					out.push_back(wait);
+					  
+			}
+		} else { //lo mismo de arriba pero dado vuelta
+		//si el costo de la frecuencia del elemento a es menor o igual al de b
+
+			if(out_b[offset_b].i >= out_a[offset_a].i){
+			//si el inicio de la frecuencia a es menor o igual que el de la b(a esta altura ya se que me conviene usar la frecuencia a)
+				if(out_b[offset_b].f > out_a[offset_a].f){ //opcion 1 y 4
+					out.push_back(out_a[offset_a]);
+					//cout << "branch 4" << endl;
+					if(out_a[offset_a].f > out_b[offset_b].i){
+						out_b[offset_b].i = out_a[offset_a].f;
+					}						
+					offset_a++;
+					
+				} else {
+					Frequency wait = out_a[offset_a];
+					wait.f = out_b[offset_b].f;
+					out.push_back(wait); //opcion 2,3,5 y 6
+					if (out_b[offset_b].f < out_a[offset_a].f){
+						out_a[offset_a].i = out_b[offset_b].f;
+						offset_b++;
+					}else{
+					offset_a++;
+					offset_b++;
+					}
+					//cout << "branch 5" << endl;
+				}
+			} else { //opcion 7, 8 y 9
+					Frequency wait = out_b[offset_b];
+					if (out_b[offset_b].f <= out_a[offset_a].i){
+						offset_b++;
+					}else{
+						wait.f = out_a[offset_a].i;
+						out_b[offset_b].i = out_a[offset_a].i;;
+					}
+					//cout << "branch 6" << endl;
+					out.push_back(wait);
+					
 			}
 		}
 	}
