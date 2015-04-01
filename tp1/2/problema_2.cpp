@@ -163,23 +163,49 @@ vector<Frequency> merge_frequencies(vector<Frequency> &a, vector<Frequency> &b){
 				} else {
 				//si el final de a es menor igual que el final de b
 					//cout << "branch 2" << endl;
-					out.push_back(out_b[offset_b]); //opcion 2,3,5 y 6
-					offset_a++;
-					offset_b++;
+					Frequency wait = out_b[offset_b];
+					if(out_a[offset_a].f < out_b[offset_b].f){
+						wait.f = out_a[offset_a].f;
+						out_b[offset_b].i = out_a[offset_a].f;
+						out.push_back(wait);
+						offset_a++;
+					}else{
+						out.push_back(wait);
+						offset_a++;
+						offset_b++;
+					}
 				}
 			} else { //opcion 7, 8 y 9
 					Frequency wait = out_a[offset_a];
 					//cout << "branch 3" << endl;
 					//nuevamente el final de la nueva frecuencia dependera de la comparacion
-					if(out_a[offset_a].f >=	out_b[offset_b].i){
+					if(out_a[offset_a].f > out_b[offset_b].f){
 						wait.f = out_b[offset_b].i;
-						if(out_a[offset_a].f >	out_b[offset_b].i){out_a[offset_a].i = out_b[offset_b].i;}
-						if(out_a[offset_a].f ==	out_b[offset_b].i){offset_a++;}
-					}else{
+						out.push_back(wait);
+						out.push_back(out_b[offset_b]);
+						out_a[offset_a].i = out_b[offset_b].f;
+						offset_b++;
+					}else if(out_a[offset_a].f = out_b[offset_b].f){
+						wait.f = out_b[offset_b].i;
+						out.push_back(wait);
+						out.push_back(out_b[offset_b]);
 						offset_a++;
+						offset_b++;
+					}else if(out_a[offset_a].f < out_b[offset_b].f){
+						if(out_a[offset_a].f < out_b[offset_b].i){
+							out.push_back(wait);
+							offset_a++;
+						}else{
+							wait.f = out_b[offset_b].i;
+							out.push_back(wait);
+							wait = out_b[offset_b];
+							wait.f = out_a[offset_a].f;
+							out.push_back(wait);
+							out_b[offset_b].i = out_a[offset_a].f;
+							offset_a++;
+						}
 					}
-					out.push_back(wait);
-					  
+										  
 			}
 		} else { //lo mismo de arriba pero dado vuelta
 		//si el costo de la frecuencia del elemento a es menor o igual al de b
@@ -189,35 +215,55 @@ vector<Frequency> merge_frequencies(vector<Frequency> &a, vector<Frequency> &b){
 				if(out_b[offset_b].f > out_a[offset_a].f){ //opcion 1 y 4
 					out.push_back(out_a[offset_a]);
 					//cout << "branch 4" << endl;
-					if(out_a[offset_a].f > out_b[offset_b].i){
+					if(out_b[offset_b].i <= out_a[offset_a].f){
 						out_b[offset_b].i = out_a[offset_a].f;
 					}						
 					offset_a++;
 					
 				} else {
 					Frequency wait = out_a[offset_a];
-					wait.f = out_b[offset_b].f;
-					out.push_back(wait); //opcion 2,3,5 y 6
-					if (out_b[offset_b].f < out_a[offset_a].f){
+					if(out_b[offset_b].f < out_a[offset_a].f){
+						wait.f = out_b[offset_b].f;
 						out_a[offset_a].i = out_b[offset_b].f;
+						out.push_back(wait);
 						offset_b++;
 					}else{
-					offset_a++;
-					offset_b++;
+						out.push_back(wait);
+						offset_a++;
+						offset_b++;
 					}
-					//cout << "branch 5" << endl;
 				}
 			} else { //opcion 7, 8 y 9
 					Frequency wait = out_b[offset_b];
-					if (out_b[offset_b].f <= out_a[offset_a].i){
-						offset_b++;
-					}else{
+					//cout << "branch 3" << endl;
+					//nuevamente el final de la nueva frecuencia dependera de la comparacion
+					if(out_b[offset_b].f > out_a[offset_a].f){
 						wait.f = out_a[offset_a].i;
-						out_b[offset_b].i = out_a[offset_a].i;;
+						out.push_back(wait);
+						out.push_back(out_a[offset_a]);
+						out_b[offset_b].i = out_a[offset_a].f;
+						offset_a++;
+					}else if(out_b[offset_b].f = out_a[offset_a].f){
+						wait.f = out_a[offset_a].i;
+						out.push_back(wait);
+						out.push_back(out_a[offset_a]);
+						offset_a++;
+						offset_b++;
+					}else if(out_b[offset_b].f < out_a[offset_a].f){
+						if(out_b[offset_b].f < out_a[offset_a].i){
+							out.push_back(wait);
+							offset_b++;
+						}else{
+							wait.f = out_a[offset_a].i;
+							out.push_back(wait);
+							wait = out_a[offset_a];
+							wait.f = out_b[offset_b].f;
+							out.push_back(wait);
+							out_a[offset_a].i = out_b[offset_b].f;
+							offset_b++;
+						}
 					}
-					//cout << "branch 6" << endl;
-					out.push_back(wait);
-					
+										  
 			}
 		}
 	}
