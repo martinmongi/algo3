@@ -174,7 +174,7 @@ vector<Frequency> merge_frequencies(vector<Frequency> &a, vector<Frequency> &b){
 					if(out_a[offset_a].f >=	out_b[offset_b].i){
 						wait.f = out_b[offset_b].i;
 						if(out_a[offset_a].f >	out_b[offset_b].i){out_a[offset_a].i = out_b[offset_b].i;}
-						if(out_a[offset_a].f =	out_b[offset_b].i){offset_a++;}
+						if(out_a[offset_a].f ==	out_b[offset_b].i){offset_a++;}
 					}else{
 						offset_a++;
 					}
