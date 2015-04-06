@@ -1,21 +1,14 @@
-OBJS = problema_2.o
-CC = g++
-DEBUG = -g
-CPPFLAGS = -Wall -c $(DEBUG)
-LDFLAGS = -Wall $(DEBUG)
+CC=g++ -g -std=c++0x
 
-ej1: $(OBJS)
-	$(CC) $(LDFLAGS) $(OBJS) -o problema_2
+.PHONY: all clean  build tiempos
 
-.SUFFIXES: .cpp
+all: clean build
 
-.cpp.o:
-	$(CC) $(CPPFLAGS) $<
-
-.PHONY: clean
 clean:
-	rm *.o problema_2
-
-.PHONY: all
-all: problema_2
-
+	rm -f problema_2
+	rm -f generador
+	
+build:
+	$(CC) -o  ej2  problema_2.cpp
+	$(CC) -o  generador  generadorEntrada.cpp
+	
