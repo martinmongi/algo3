@@ -14,9 +14,7 @@ int main(){
 
 	cin >> n >> k;
 
-	vector<vector<char> > board(n, vector<char>(n, 0));
-
-	print_board(board);
+	vector<vector<char> > board(n, vector<char>(n, 0)); //Tablero en cero todo
 
 	for(i = 0; i < k; i++){
 		cin >> x >> y;
@@ -25,15 +23,21 @@ int main(){
 		//print_board(board);
 		add_horse(board,x,y,OLD_HORSE);
 	}
+
+	//Tablero con los caballos por default puestos
+	cout << "Tablero inicial:" << endl;
 	print_board(board);
 	vector<vector<char> > solution = solve(board);
 
+	cout << "Solucion encontrada:" << endl;
 	print_board(solution);
+
+	cout << "Caballos usados: " << count_new_horses(solution) << endl;
 }
 
 void add_horse(vector<vector<char> > &board, int x, int y, char type){
 	//cout << "Agrego caballo en " << x << TAB << y << endl;
-	int n = board.size();
+	//int n = board.size();
 	//if(x >= 0 && x < n && y >= 0 && y < n){
 		board[x][y] = type;
 		set_square(board, x + 2, y + 1);
@@ -49,8 +53,9 @@ void add_horse(vector<vector<char> > &board, int x, int y, char type){
 
 void set_square(vector<vector<char> > &board, int x, int y){
 	int n = board.size();
-	if(x >= 0 && x < n && y >= 0 && y < n && board[x][y] >= 0)
-		board[x][y]++;
+	if(x >= 0 && x < n && y >= 0 && y < n)
+		if(board[x][y] >= 0)
+			board[x][y]++;
 }
 
 void print_board(vector<vector<char> > &board){
@@ -74,45 +79,52 @@ int count_new_horses(vector<vector<char> > &board){
 	return count;
 }
 
+pair<int, int> find_blank(vector<vector<char> > &board){
+	pair<int, int> ans;
+	int n = board.size();
+	for(int i = 0; i < n; i++){
+		for(int j = 0; j < n; j++){
+			if(board[i][j] == 0){
+				ans.first = i;
+				ans.second = j;
+				return ans;
+			}
+		}
+	}
+	ans.first = n;
+	ans.second = n;
+	return ans;
+}
+
 vector<vector<char> > solve(vector<vector<char> > board){
 	int n = board.size();
-	int i = 0, j = 0, min_horses, horses;
+	int min_horses, horses;
 
-	while(i < n && board[i][j] != 0){
-		j = 0;
-		while(j < n && board[i][j] != 0){
-			//cout << i << TAB << j << endl;
-			j++;
-		}
-		i++;
-	}
+	pair<int, int> first_blank = find_blank(board);
 
-	//cout << i << TAB << j << endl;
-	if(i == n){
-		cout << "Tendria qe entrar aca" << endl;
+	//Si llego al final del tablero sin encontrar 0 significa que esta todo cubierto, entonces, devuelvo el que me pasan
+	if(first_blank.first == n)
 		return board;
-	}
 
 	//en i, j esta el primer casillero no expuesto
 
-	int x = i, y = j;
+	int x = first_blank.first, y = first_blank.second;
 	vector<vector<char> > sug_board, solution;
 
 	//case 1
 	sug_board = board;
+	add_horse(sug_board, x, y, NEW_HORSE);
+	sug_board = solve(sug_board);
+	horses = count_new_horses(sug_board);
+	min_horses = horses;
+	solution = sug_board;
+	
+	//case 2
+	sug_board = board;
 	if(x-1 >= 0 && y-2 >= 0){
 		add_horse(sug_board, x-1, y-2, NEW_HORSE);
 		sug_board = solve(sug_board);
-		horses = count_new_horses(board);
-		min_horses = horses;
-		solution = sug_board;
-	}
-	//case 2
-	sug_board = board;
-	if(x-2 >= 0 && y-1 >= 0){
-		add_horse(sug_board, x-2, y-1, NEW_HORSE);
-		sug_board = solve(sug_board);
-		horses = count_new_horses(board);
+		horses = count_new_horses(sug_board);
 		if(horses < min_horses){
 			min_horses = horses;
 			solution = sug_board;
@@ -120,10 +132,10 @@ vector<vector<char> > solve(vector<vector<char> > board){
 	}
 	//case 3
 	sug_board = board;
-	if(x+1 < n && y-2 >= 0){
-		add_horse(sug_board, x+1, y-2, NEW_HORSE);
+	if(x-2 >= 0 && y-1 >= 0){
+		add_horse(sug_board, x-2, y-1, NEW_HORSE);
 		sug_board = solve(sug_board);
-		horses = count_new_horses(board);
+		horses = count_new_horses(sug_board);
 		if(horses < min_horses){
 			min_horses = horses;
 			solution = sug_board;
@@ -131,54 +143,65 @@ vector<vector<char> > solve(vector<vector<char> > board){
 	}
 	//case 4
 	sug_board = board;
-	if(x+2 < n && y-1 >= 0){
-		add_horse(sug_board, x+2, y-1, NEW_HORSE);
+	if(x+1 < n && y-2 >= 0){
+		add_horse(sug_board, x+1, y-2, NEW_HORSE);
 		sug_board = solve(sug_board);
-		horses = count_new_horses(board);
+		horses = count_new_horses(sug_board);
 		if(horses < min_horses){
 			min_horses = horses;
 			solution = sug_board;
 		}
 	}
-	//case 1
+	//case 5
+	sug_board = board;
+	if(x+2 < n && y-1 >= 0){
+		add_horse(sug_board, x+2, y-1, NEW_HORSE);
+		sug_board = solve(sug_board);
+		horses = count_new_horses(sug_board);
+		if(horses < min_horses){
+			min_horses = horses;
+			solution = sug_board;
+		}
+	}
+	//case 6
 	sug_board = board;
 	if(x+1 < n && y+2 < n){
 		add_horse(sug_board, x+1, y+2, NEW_HORSE);
 		sug_board = solve(sug_board);
-		horses = count_new_horses(board);
+		horses = count_new_horses(sug_board);
 		if(horses < min_horses){
 			min_horses = horses;
 			solution = sug_board;
 		}
 	}
-	//case 1
+	//case 7
 	sug_board = board;
 	if(x+2 < n && y+1 < n){
 		add_horse(sug_board, x+2, y+1, NEW_HORSE);
 		sug_board = solve(sug_board);
-		horses = count_new_horses(board);
+		horses = count_new_horses(sug_board);
 		if(horses < min_horses){
 			min_horses = horses;
 			solution = sug_board;
 		}
 	}
-	//case 1
+	//case 8
 	sug_board = board;
 	if(x-1 >= 0 && y+2 < n){
 		add_horse(sug_board, x-1, y+2, NEW_HORSE);
 		sug_board = solve(sug_board);
-		horses = count_new_horses(board);
+		horses = count_new_horses(sug_board);
 		if(horses < min_horses){
 			min_horses = horses;
 			solution = sug_board;
 		}
 	}
-	//case 1
+	//case 9
 	sug_board = board;
 	if(x-2 >= 0 && y+1 < n){
 		add_horse(sug_board, x-2, y+1, NEW_HORSE);
 		sug_board = solve(sug_board);
-		horses = count_new_horses(board);
+		horses = count_new_horses(sug_board);
 		if(horses < min_horses){
 			min_horses = horses;
 			solution = sug_board;
