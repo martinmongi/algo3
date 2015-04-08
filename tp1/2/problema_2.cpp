@@ -140,10 +140,12 @@ vector<Frequency> merge_frequencies(vector<Frequency> &a, vector<Frequency> &b){
 	}
 	*/
 //*******************************************************************************************************************************+	
+	int tam_a = out_a.size();
+	int tam_b = out_b.size();
 	bool idem_id_ant;	//para saber si la frecuencia a pushear es igual a la anterior
 	Frequency wait;
 	
-	while(offset_a < na && offset_b < nb){//O(2(n/2))
+	while(offset_a < tam_a && offset_b < tam_b){//O(2(n/2))
 	//cout << "freqs: " << out_a[offset_a].id << SPACE << out_a[offset_a].i << SPACE << out_a[offset_a].f << endl; 
 	//cout << "freqs: " << out_b[offset_b].id << SPACE << out_b[offset_b].i << SPACE << out_b[offset_b].f << endl; 
 	//de aca en adelante me refiero a cada frecuencia como 'a' y 'b' a los elementos de out_a y out_b respectivamente actualmente iterados
@@ -166,7 +168,7 @@ vector<Frequency> merge_frequencies(vector<Frequency> &a, vector<Frequency> &b){
 					out.push_back(out_b[offset_b]);
 					}
 					//el final de la frecuencia dependera de comparar el final de b con el inicio de a
-					if(out_a[offset_a].i <= out_b[offset_b].f){//O(1)
+					if(out_a[offset_a].i < out_b[offset_b].f){//O(1)
 						out_a[offset_a].i = out_b[offset_b].f;	//O(1)
 					}
 					offset_b++;
@@ -278,7 +280,7 @@ vector<Frequency> merge_frequencies(vector<Frequency> &a, vector<Frequency> &b){
 						out.push_back(out_a[offset_a]);
 					}
 					//cout << "branch 4" << endl;
-					if(out_b[offset_b].i <= out_a[offset_a].f){
+					if(out_b[offset_b].i < out_a[offset_a].f){
 						out_b[offset_b].i = out_a[offset_a].f;
 					}						
 					offset_a++;
@@ -377,14 +379,31 @@ vector<Frequency> merge_frequencies(vector<Frequency> &a, vector<Frequency> &b){
 		}
 	}
 
-	while(offset_a < na){	//O(n/2)
-		out.push_back(out_a[offset_a]);
-		offset_a++;
-	}
-
-	while(offset_b < nb){	//O(n/2)
-		out.push_back(out_b[offset_b]);
-		offset_b++;
+	if (offset_a < tam_a){
+		if(out.size()!=0){
+			if(out.back().id == out_a[offset_a].id){
+				out.back().f = out_a[offset_a].f;
+				offset_a ++;
+			}
+		}
+		
+		while(offset_a < tam_a){	//O(n/2)
+			out.push_back(out_a[offset_a]);
+			offset_a++;
+		}
+		
+	}else if (offset_b < tam_b){
+		if(out.size()!=0){
+			if(out.back().id == out_b[offset_b].id){
+				out.back().f = out_b[offset_b].f;
+				offset_b ++;
+			}
+		}
+		
+		while(offset_b < tam_b){	//O(n/2)
+			out.push_back(out_b[offset_b]);
+			offset_b++;
+		}
 	}
 
 	return out;
