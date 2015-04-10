@@ -1,7 +1,7 @@
 OBJS = problema_3.o
 CC = g++
 DEBUG = -g
-CPPFLAGS = -Wall -c $(DEBUG)
+CPPFLAGS = -Wall -c $(DEBUG) -std=c++11
 LDFLAGS = -Wall $(DEBUG)
 
 ej1: $(OBJS)
