@@ -7,13 +7,14 @@ using namespace std;
 #define OLD_HORSE -2
 #define NEW_HORSE -3
 #define TAB '\t'
+#define SPACE ' '
 
 int upper_bound;
 vector<pair<int, int> > offsets = {{0,0},{2,1},{1,2},{1,-2},{2,-1},{-1,2},{-2,1},{-1,-2},{-2,-1}};
 
 int main(){
 	
-	int n, k, i, x, y;
+	int n, k, i, j, x, y;
 
 	cin >> n >> k;
 
@@ -29,14 +30,22 @@ int main(){
 	}
 
 	//Tablero con los caballos por default puestos
-	cout << "Tablero inicial:" << endl;
-	print_board(board);
+	//cout << "Tablero inicial:" << endl;
+	//print_board(board);
 	vector<vector<char> > solution = solve(board);
 
-	cout << "Solucion encontrada:" << endl;
-	print_board(solution);
+	cout << count_new_horses(solution) << endl;
+	for(i = 0; i < n; i++){
+		for(j = 0; j < n; j++){
+			if(solution[i][j] == NEW_HORSE)
+				cout << i + 1 << SPACE << j + 1 << endl;
+		}
+	}
+	//cout << "Solucion encontrada:" << endl;
+	//print_board(solution);
 
-	cout << "Caballos usados: " << count_new_horses(solution) << endl;
+	//cout << "Caballos usados: " << count_new_horses(solution) << endl;
+	return 0;
 }
 
 void add_horse(vector<vector<char> > &board, int x, int y, char type){
