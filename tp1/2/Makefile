@@ -5,7 +5,7 @@ CC=g++ -g -std=c++0x
 all: clean build
 
 clean:
-	rm -f problema_2
+	rm -f ej2
 	rm -f generador
 	
 build:

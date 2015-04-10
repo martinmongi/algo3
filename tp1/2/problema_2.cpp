@@ -7,33 +7,33 @@ using namespace std;
 
 int main(){
 	int n, i;
-	cin >> n;
-	vector<Frequency> frequencies(n);
+	cin >> n;		
+	//while (n!=0){
+		
+		vector<Frequency> frequencies(n);
 
-	for(i = 0; i < n; i++){ //O(n)
-		cin >> frequencies[i].cost >> frequencies[i].i >> frequencies[i].f;
-		frequencies[i].id = i + 1;
-	}
+		for(i = 0; i < n; i++){ //O(n)
+			cin >> frequencies[i].cost >> frequencies[i].i >> frequencies[i].f;
+			frequencies[i].id = i + 1;
+		}
 
-	vector<Frequency> out = solve(frequencies); //T(n)
-	vector<Frequency> clean_out;
-	int total_cost = 0;
-	int final = -1;
+		vector<Frequency> out = solve(frequencies); //T(n)
+		int total_cost = 0;
+		int final = -1;
 
-	for(i = 0; i < out.size(); i++){
-		if (out[i].i >= final){
-			final = out[i].f;
+		for(i = 0; i < out.size(); i++){
 			total_cost += (out[i].f - out[i].i) * out[i].cost;
-			clean_out.push_back(out[i]);
-		}		
-	}
+		}
 
-	cout << total_cost << endl;
-	for(i = 0; i < clean_out.size(); i++){
-		cout << clean_out[i].i << SPACE << clean_out[i].f << SPACE << clean_out[i].id << endl;
-	}
-	cout << "-1" << endl;
-	return 0; 
+		cout << total_cost << endl;
+		
+		for(i = 0; i < out.size(); i++){
+			cout << out[i].i << SPACE << out[i].f << SPACE << out[i].id << endl;
+		}
+		cout << "-1" << endl;
+		//cin >> n;
+	//}
+	return 0;
 }
 
 vector<Frequency> solve(vector<Frequency> &v){
@@ -86,60 +86,7 @@ vector<Frequency> merge_frequencies(vector<Frequency> &a, vector<Frequency> &b){
 
 	int offset_a = 0, offset_b = 0;	//O(1)
 	
-	//***********************************dejo comentado el while anterior****************************//
 	
-	/*while(offset_a < na && offset_b < nb){
-	//cout << "freqs: " << out_a[offset_a].id << SPACE << out_a[offset_a].i << SPACE << out_a[offset_a].f << endl; 
-	//cout << "freqs: " << out_b[offset_b].id << SPACE << out_b[offset_b].i << SPACE << out_b[offset_b].f << endl; 
-			
-		if(out_a[offset_a].cost > out_b[offset_b].cost){
-	
-			if(out_a[offset_a].i >= out_b[offset_b].i){
-	
-				if(out_a[offset_a].f > out_b[offset_b].f){ //opcion 1 y 4
-					//cout << "branch 1" << endl;
-					out.push_back(out_b[offset_b]);
-					out_a[offset_a].i = out_b[offset_b].f;
-					offset_b++;
-				} else {
-					//cout << "branch 2" << endl;
-					out.push_back(out_b[offset_b]); //opcion 2,3,5 y 6
-					offset_a++;
-					offset_b++;
-				}
-			} else if(out_a[offset_a].i < out_b[offset_b].i){ //opcion 7, 8 y 9
-					Frequency wait = out_a[offset_a];
-					//cout << "branch 3" << endl;
-					wait.f = out_b[offset_b].i;
-					out.push_back(wait);
-					out_a[offset_a].i = out_b[offset_b].i; 
-			}
-		} else { //lo mismo de arriba pero dado vuelta
-
-			if(out_b[offset_b].i >= out_a[offset_a].i){
-
-				if(out_b[offset_b].f > out_a[offset_a].f){ //opcion 1 y 4
-					out.push_back(out_a[offset_a]);
-					//cout << "branch 4" << endl;
-					out_b[offset_b].i = out_a[offset_a].f;
-					offset_a++;
-				} else {
-					out.push_back(out_a[offset_a]); //opcion 2,3,5 y 6
-					offset_a++;
-					offset_b++;
-					//cout << "branch 5" << endl;
-				}
-			} else if(out_b[offset_b].i < out_a[offset_a].i){ //opcion 7, 8 y 9
-					Frequency wait = out_b[offset_b];
-					wait.f = out_a[offset_a].i;
-					//cout << "branch 6" << endl;
-					out.push_back(wait);
-					out_b[offset_b].i = out_a[offset_a].i; 
-			}
-		}
-	}
-	*/
-//*******************************************************************************************************************************+	
 	int tam_a = out_a.size();
 	int tam_b = out_b.size();
 	bool idem_id_ant;	//para saber si la frecuencia a pushear es igual a la anterior
