@@ -1,0 +1,76 @@
+#
+# Graficos para complejidad
+# para correrlo:
+#    $ gnuplot
+# En el prompt de gnuplot:
+#    gnuplot> load('complejidad.gpi')
+# o directamente
+# gnuplot complejidad.gpi
+#
+# toma el archivos tiempos.dat, 
+# escribe el archivo: alguna_cosa.jpg 
+#
+# las columnas en estos archivos son: n tiempo
+# para hacer referencia a ellas: ($1) para n, ($2) para tiempo
+#
+reset
+
+label_algo = "zombieland" # leyenda algoritmo
+label_Ode = "k'*n*log*n" # leyenda complejidad
+label_ode = "k*n"
+ode = "n-n" # para el archivo de salida
+o(n) = 650*n # complejidad 
+O(n) = 70*n*log(n)
+#O(n) = 0.01*n*n
+d(n) = n 
+
+entrada = "tiempos.dat"
+salida = "tiempos-".ode.".jpg"
+salidalog = "tiempos-log".ode.".jpg"
+
+
+# Retrieve statistical properties
+plot entrada u 1:2
+min_y = GPVAL_DATA_Y_MIN
+max_y = GPVAL_DATA_Y_MAX
+min_x = GPVAL_DATA_X_MIN
+max_x = GPVAL_DATA_X_MAX
+
+
+set terminal jpeg
+set output salida
+
+
+#set title "Complejidad"
+set xlabel "Cantidad de ciudades"
+set ylabel "Tiempo (ticks de clock) / n"
+
+set key left top
+
+maximo = O(max_x)/d(max_x)
+minimo = O(min_x)/d(min_x)
+set yrange [minimo : maximo]
+# el grafico
+plot    entrada using ($1):(($2)/d($1)) smooth unique title label_algo with points pt 7 ps 1, \
+        entrada using ($1):(O($1)/d($1)) title label_Ode with lines, \
+        entrada using ($1):(o($1)/d($1)) title label_ode with lines lw 2.5
+
+#plot    entrada using ($1):($2) smooth unique title "zombieland" with points, \
+#        entrada using ($1):(($1)*log($1)+50000) title "n log(n)" with lines,
+#        entrada using ($1):(100*($1)*log($1)+50000) title "n log(n)" with lines
+#
+#escala logaritmica
+#
+set output salidalog
+#set title "Complejidad - escala logaritmica"
+#set xlabel "Cantidad de ciudades"
+#set ylabel "tiempo (Ticks de clock)"
+
+#poner en escala logaritmica en y
+set logscale y
+
+# para volver a dibujar con otras opciones
+replot  
+
+# para limpiar lo seteado
+reset
