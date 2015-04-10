@@ -6,7 +6,6 @@ using namespace std;
 #define OLD_THREATENED -1
 #define OLD_HORSE -2
 #define NEW_HORSE -3
-#define INCR_THREAT 1
 #define TAB '\t'
 
 int upper_bound;
@@ -19,7 +18,7 @@ int main(){
 	cin >> n >> k;
 
 	upper_bound = n*n;
-	vector<vector<char> > board(n, vector<char>(n, 0)); //Tablero en cero todo
+	vector<vector<char> > board(n, vector<char>(n, EMPTY)); //Tablero en cero todo
 
 	for(i = 0; i < k; i++){
 		cin >> x >> y;
@@ -89,7 +88,7 @@ pair<int, int> find_blank(vector<vector<char> > &board){
 	int n = board.size();
 	for(int i = 0; i < n; i++){
 		for(int j = 0; j < n; j++){
-			if(board[i][j] == 0){
+			if(board[i][j] == EMPTY){
 				ans.first = i;
 				ans.second = j;
 				return ans;
@@ -108,8 +107,9 @@ vector<vector<char> > solve(vector<vector<char> > board){
 	pair<int, int> first_blank = find_blank(board);
 
 	//Si llego al final del tablero sin encontrar 0 significa que esta todo cubierto, entonces, devuelvo el que me pasan
+	horses = count_new_horses(board);
+
 	if(first_blank.first == n){
-		horses = count_new_horses(board);
 		if(horses < upper_bound)
 			upper_bound = horses;
 		return board;
@@ -121,6 +121,11 @@ vector<vector<char> > solve(vector<vector<char> > board){
 	vector<vector<char> > sug_board, solution;
 	int horse_x, horse_y;
 
+// COMENTAR ESTE IF PARA SACAR LA PODA
+
+	if(horses + 1 >= upper_bound)
+		return solution;
+
 	
 	for(unsigned int i = 0; i < offsets.size(); i++){
 		horse_x = x + offsets[i].first;
@@ -129,10 +134,12 @@ vector<vector<char> > solve(vector<vector<char> > board){
 			sug_board = board;	
 			add_horse(sug_board, horse_x, horse_y, NEW_HORSE);
 			sug_board = solve(sug_board);
-			horses = count_new_horses(sug_board);
-			if(horses < min_horses){
-				min_horses = horses;
-				solution = sug_board;
+			if(!sug_board.empty()){
+				horses = count_new_horses(sug_board);
+				if(horses < min_horses){
+					min_horses = horses;
+					solution = sug_board;
+				}
 			}
 		}
 	}
