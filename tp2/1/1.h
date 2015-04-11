@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <stack>
 
 using namespace std;
 
@@ -9,4 +10,4 @@ struct Phase{
 	int buggy_cost;
 };
 
-int solve(vector<Phase> &race, int km, int kb, int i, vector<char> &choices);
+pair<int,stack<char> > solve(vector<Phase> &race, int km, int kb, int i);
