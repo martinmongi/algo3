@@ -123,8 +123,8 @@ vector<vector<char> > solve(vector<vector<char> > board){
 
 // COMENTAR ESTE IF PARA SACAR LA PODA
 
-	if(horses + 1 >= upper_bound)
-		return solution;
+	// if(horses + 1 >= upper_bound)
+	// 	return solution;
 
 	
 	for(unsigned int i = 0; i < offsets.size(); i++){
