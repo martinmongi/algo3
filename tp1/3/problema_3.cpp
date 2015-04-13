@@ -18,7 +18,7 @@ int main(){
 
 	cin >> n >> k;
 
-	upper_bound = n*n;
+	upper_bound = n*n + 1;
 	vector<vector<char> > board(n, vector<char>(n, EMPTY)); //Tablero en cero todo
 
 	for(i = 0; i < k; i++){
