@@ -1,5 +1,8 @@
+#include "disjoint_set.h"
 #include <iostream>
 #include <vector>
+#include <set>
+#include <algorithm>
 
 struct Node{
 	int neighbor;
