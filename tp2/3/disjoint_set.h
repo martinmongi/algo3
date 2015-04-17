@@ -19,19 +19,17 @@ private:
 DisjointSets::DisjointSets(int x){
 	for(int i = 0; i < x; i++)
 		uf.push_back(i);
-	// std::cout << "Creado el vector" << std::endl;
-	// for(int i = 0; i < x; i++)
-		// std::cout << i << SPACE << uf[i] << std::endl;
 }
 
 int DisjointSets::FindSet(int x){
-	if(uf[x] == x)
-		return x;
-	return FindSet(uf[x]);
+	while(uf[x] != x){
+		x = uf[x];
+	}
+	return x;
 }
 
 void DisjointSets::MergeSets(int x, int y){
-	// std::cout << "Merging " << x << SPACE << y << std::endl;
+
 	uf[FindSet(std::max(x,y))] = FindSet(std::min(x,y));
 }
 
