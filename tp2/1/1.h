@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <stack>
+#include <queue>
 
 using namespace std;
 
@@ -10,4 +10,14 @@ struct Phase{
 	int buggy_cost;
 };
 
-pair<int,stack<char> > solve(vector<Phase> &race, int km, int kb, int i);
+struct solEtapa{
+	int fila_ant;
+	int cola_ant;
+	char vehiculo;
+	int costo_min;
+};
+
+
+void llenarCostosMinimos (vector<vector<vector<solEtapa> > > & dd, int etapa, int k_b, int k_m, vector<Phase>& v);
+int minimo(int usar_bmx, int usar_moto, int usar_buggy);
+void devolverResultado(vector<vector<vector<solEtapa> > > & dd, int cant_etapas, int K_b, int k_m);
