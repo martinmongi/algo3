@@ -1,5 +1,6 @@
 #include <vector>
 #include <iostream>
+#include <cassert>
 
 #define NORTH 0
 #define EAST 1
@@ -16,8 +17,9 @@ struct Corner{
 class Grid{
 public:
 	Grid();
-	bool Solve();
+	int Solve();
 	void PrintGrid();
+	void PrintCorners();
 private:
 	int n, m, s, ih, iv, bh, bv;
 	std::vector<std::vector<int> > h_streets;
@@ -44,13 +46,13 @@ Grid::Grid(){
 
 	//Initialize h_streets
 	std::vector<int> a(m-1);
-	for(int i = 0; i < n + 2; i++){
+	for(int i = 0; i < n; i++){
 		h_streets.push_back(a);
 	}
 
 	//Initialize v_streets
 	std::vector<int> b(m);
-	for(int i = 0; i < n + 1; i++){
+	for(int i = 0; i < n - 1; i++){
 		v_streets.push_back(b);
 	}
 
@@ -79,58 +81,72 @@ Grid::Grid(){
 
 	for(int j = 0; j < m - 1; j++){
 		std::cin >> buff;
-		h_streets[n][j] = (buff - s > 0? buff - s : 0);
+		h_streets[n-1][j] = (buff - s > 0? buff - s : 0);
 		// std::cout << "h  " <<  n << SPACE << j << SPACE << buff << NEWLINE;
 	}
 	// std::cout << "SALE" << NEWLINE;
 }
 
+void Grid::PrintCorners(){
+	std::vector<int> c(m, -1);
+	for(int i = 0; i < n; i++){
+		for(int j = 0; j < m; j++){
+			std::cout << corners[i][j] << TAB; 
+		}
+		std::cout << NEWLINE;
+	}
+
+}
 void Grid::PrintGrid(){
-	for(int i = 0; i < n - 1; i++){
+	for(int i = 0; i < h_streets.size() - 1; i++){
 		std::cout << TAB;
-		for(int j = 0; j < m - 1; j++){
+		for(int j = 0; j < h_streets[0].size(); j++){
 			std::cout << h_streets[i][j] << TAB << TAB;
 		}
 		std::cout << NEWLINE << NEWLINE;
-		for(int j = 0; j < m; j++){
+		for(int j = 0; j < v_streets[0].size(); j++){
 			std::cout << v_streets[i][j] << TAB << TAB;
 		}
 		std::cout << NEWLINE << NEWLINE;
 	}
 
 	std::cout << TAB;
-	for(int j = 0; j < m - 1; j++){
-		std::cout << h_streets[n][j] << TAB << TAB;
+	for(int j = 0; j < h_streets[n-1].size(); j++){
+		std::cout << h_streets[n-1][j] << TAB << TAB;
 	}
 	std::cout << NEWLINE;
 }
 
 int Grid::CostOfMoving(int y, int x, int direction){
+	int res;
+	
 	switch(direction){
 		case NORTH:
-			if(y > 0)
-				return v_streets[y - 1][x];
-			else
-				return -1;
+			// std::cout << "NORTH" << NEWLINE;
+			// assert(y > 0);
+			res = v_streets[y - 1][x];
+			break;
 		case EAST:
-			if(x < m - 1)
-				return h_streets[y][x];
-			else
-				return -1;
+			// std::cout << "EAST" << NEWLINE;
+			// assert(x < m - 1);
+			res = h_streets[y][x];
+			break;
 		case SOUTH:
-			if(y < n - 1)
-				return v_streets[y][x];
-			else
-				return -1;
+			// std::cout << "SOUTH" << NEWLINE;
+			// assert(y < n - 1);
+			res = v_streets[y][x];
+			break;
 		case WEST:
-			if(x > 0)
-				return h_streets[y - 1][x];
-			else
-				return -1;
+			// std::cout << "WEST" << NEWLINE;
+			// assert(x > 0);
+			res = h_streets[y - 1][x];
+			break;
 	}
+	//std::cout << y << TAB << x << TAB << direction << TAB << res << NEWLINE;
+	return res;
 }
 
-bool Grid::Solve(){
+int Grid::Solve(){
 	Corner c;
 	c.y = iv;
 	c.x = ih;
@@ -138,37 +154,54 @@ bool Grid::Solve(){
 	Insert(c);
 	int i = 0, x, y, cost;
 
-	while(i < queue.size()){
+	while(/*i < queue.size() &&*/ ((queue[i].cost < s) || ((bv == queue[i].x) && (y == queue[i].y)))) {
 		x = queue[i].x;
 		y = queue[i].y;
 		cost = queue[i].cost;
 
 		//move north
-		c.x = x - 1;
-		c.y = y;
-		c.cost = cost + CostOfMoving(y, x, NORTH);
-		Insert(c);
+		c.x = x;
+		c.y = y - 1;
+		
+		if((c.y >= 0) && (c.x >= 0) && (c.y < corners.size()) && (c.x < corners[0].size()) && (corners[c.y][c.x] < 0)){
+			c.cost = cost + CostOfMoving(y, x, NORTH);
+			corners[c.y][c.x] = c.cost;
+			Insert(c);
+		}
 
 		//move south
-		c.x = x + 1;
-		c.y = y;
-		c.cost = cost + CostOfMoving(y, x, SOUTH);
-		Insert(c);
+		c.x = x;
+		c.y = y + 1;
+		if((c.y >= 0) && (c.x >= 0) && (c.y < corners.size()) && (c.x < corners[0].size()) && (corners[c.y][c.x] < 0)){
+			c.cost = cost + CostOfMoving(y, x, SOUTH);
+			corners[c.y][c.x] = c.cost;
+			Insert(c);
+		}
 		
 		//move east
 		c.x = x + 1;
 		c.y = y;
-		c.cost = cost + CostOfMoving(y, x, EAST);
-		Insert(c);
+		if((c.y >= 0) && (c.x >= 0) && (c.y < corners.size()) && (c.x < corners[0].size()) && (corners[c.y][c.x] < 0)){
+			c.cost = cost + CostOfMoving(y, x, EAST);
+			corners[c.y][c.x] = c.cost;
+			Insert(c);
+		}
 		
-		//move north
+		//move west
 		c.x = x - 1;
 		c.y = y;
-		c.cost = cost + CostOfMoving(y, x, WEST);
-		Insert(c);
+		if((c.y >= 0) && (c.x >= 0) && (c.y < corners.size()) && (c.x < corners[0].size()) && (corners[c.y][c.x] < 0)){
+			c.cost = cost + CostOfMoving(y, x, WEST);
+			corners[c.y][c.x] = c.cost;
+			Insert(c);
+		}
 		
 		i++;
 	}
+	if(queue[i].cost <= s)
+		return s - queue[i].cost;
+	else
+		return -1;
 }
 
 void Grid::Insert(Corner &c){
