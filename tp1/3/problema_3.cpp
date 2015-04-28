@@ -30,25 +30,29 @@ int main(){
 	}
 
 	//Tablero con los caballos por default puestos
-	//cout << "Tablero inicial:" << endl;
-	//print_board(board);
-	vector<vector<char> > solution = solve(board);
+	// cout << "Tablero inicial:" << endl;
+	// print_board(board);
+	vector<vector<char> > solution = solve(board, 0, 0);
 
 	cout << count_new_horses(solution) << endl;
-	for(i = 0; i < n; i++){
-		for(j = 0; j < n; j++){
+	for(i = 0; i < (int)solution.size(); i++){
+		for(j = 0; j < (int)solution.size(); j++){
 			if(solution[i][j] == NEW_HORSE)
 				cout << i + 1 << SPACE << j + 1 << endl;
 		}
 	}
-	//cout << "Solucion encontrada:" << endl;
-	//print_board(solution);
+	cout << "Solucion encontrada:" << endl;
+	print_board(solution);
 
 	//cout << "Caballos usados: " << count_new_horses(solution) << endl;
 	return 0;
 }
 
 void add_horse(vector<vector<char> > &board, int x, int y, char type){
+	assert(x >= 0);
+	assert(y >= 0);
+	assert(x < (int)board.size());
+	assert(y < (int)board.size());
 	//cout << "Agrego caballo en " << x << TAB << y << endl;
 	//int n = board.size();
 	//if(x >= 0 && x < n && y >= 0 && y < n){
@@ -92,66 +96,102 @@ int count_new_horses(vector<vector<char> > &board){
 	return count;
 }
 
-pair<int, int> find_blank(vector<vector<char> > &board){
-	pair<int, int> ans;
-	int n = board.size();
-	for(int i = 0; i < n; i++){
-		for(int j = 0; j < n; j++){
+bool is_solution(vector<vector<char> > &board){
+	if(board.empty())
+		return false;
+	for(int i = 0; i < (int)board.size(); i++){
+		for(int j = 0; j < (int)board.size(); j++){
 			if(board[i][j] == EMPTY){
-				ans.first = i;
-				ans.second = j;
-				return ans;
+				return false;
 			}
 		}
 	}
-	ans.first = n;
-	ans.second = n;
-	return ans;
+	return true;
 }
 
-vector<vector<char> > solve(vector<vector<char> > board){
+
+vector<vector<char> > solve(vector<vector<char> > board, int i, int j){
 	int n = board.size();
-	int min_horses = n*n, horses;
+	assert(n!=0);
+	vector<vector<char> > sol;
 
-	pair<int, int> first_blank = find_blank(board);
-
-	//Si llego al final del tablero sin encontrar 0 significa que esta todo cubierto, entonces, devuelvo el que me pasan
-	horses = count_new_horses(board);
-
-	if(first_blank.first == n){
-		if(horses < upper_bound)
-			upper_bound = horses;
-		return board;
+	if(i == n){
+		if(is_solution(board))
+			return board;
+		else
+			return sol;
 	}
 
-	//en i, j esta el primer casillero no expuesto
 
-	int x = first_blank.first, y = first_blank.second;
-	vector<vector<char> > sug_board, solution;
-	int horse_x, horse_y;
+	int min_horses = n*n;
 
-// COMENTAR ESTE IF PARA SACAR LA PODA
+	// cout << "FUNCTION CALL:\t" << i << TAB << j << endl;
+	// print_board(board);
 
-	// if(horses + 1 >= upper_bound)
-	// 	return solution;
+	vector<vector<char> > board_with_horse = board;
+	add_horse(board_with_horse, i, j, NEW_HORSE);
+	
+	if(j == (int)board.size() - 1){j = 0; i++; } else{j++; }
+
+	vector<vector<char> > sol_with = solve(board_with_horse, i, j);
+	vector<vector<char> > sol_without = solve(board, i, j);
+
+	if(is_solution(sol_with)){
+		min_horses = min(count_new_horses(sol_with), min_horses);
+		sol = sol_with;
+	}
+
+	if(is_solution(sol_without)){
+		min_horses = min(count_new_horses(sol_without), min_horses);
+		sol = sol_without;
+	}
+
+	return sol;
+	
+}
+
+// vector<vector<char> > solve(vector<vector<char> > board, int i, int j){
+
+
+// 	pair<int, int> first_blank = find_blank(board);
+
+// 	//Si llego al final del tablero sin encontrar 0 significa que esta todo cubierto, entonces, devuelvo el que me pasan
+// 	horses = count_new_horses(board);
+
+// 	if(i == n){
+// 		if(horses < upper_bound)
+// 			upper_bound = horses;
+// 		return board;
+// 	}
+
+// 	//en i, j esta el primer casillero no expuesto
+
+// 	int x = first_blank.first, y = first_blank.second;
+// 	vector<vector<char> > sug_board, solution;
+// 	int horse_x, horse_y;
+
+// // COMENTAR ESTE IF PARA SACAR LA PODA
+
+// 	// if(horses + 1 >= upper_bound)
+// 	//  	return solution;
 
 	
-	for(unsigned int i = 0; i < offsets.size(); i++){
-		horse_x = x + offsets[i].first;
-		horse_y = y + offsets[i].second;
-		if(horse_x >= 0 && horse_x < n && horse_y >= 0 && horse_y < n){
-			sug_board = board;	
-			add_horse(sug_board, horse_x, horse_y, NEW_HORSE);
-			sug_board = solve(sug_board);
-			if(!sug_board.empty()){
-				horses = count_new_horses(sug_board);
-				if(horses < min_horses){
-					min_horses = horses;
-					solution = sug_board;
-				}
-			}
-		}
-	}
+// 	for(unsigned int i = 0; i < offsets.size(); i++){
+// 		horse_x = x + offsets[i].first;
+// 		horse_y = y + offsets[i].second;
+// 		if(horse_x >= 0 && horse_x < n && horse_y >= 0 && horse_y < n){
+// 			sug_board = board;	
+// 			add_horse(sug_board, horse_x, horse_y, NEW_HORSE);
+// 			sug_board = solve(sug_board);
+// 			if(!sug_board.empty()){
+// 				horses = count_new_horses(sug_board);
+// 				if(horses <= min_horses){
+// 					min_horses = horses;
+// 					solution = sug_board;
+// 				}
+// 			}
+// 		}
+// 	}
 
-	return solution;
-}
+// 	return solution;
+// }
