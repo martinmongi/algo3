@@ -109,89 +109,69 @@ bool is_solution(vector<vector<char> > &board){
 	return true;
 }
 
-
 vector<vector<char> > solve(vector<vector<char> > board, int i, int j){
-	int n = board.size();
-	assert(n!=0);
+	int n = board.size(), min_horses = n*n, horses = min_horses;
 	vector<vector<char> > sol;
 
+	bool second_prune = true;;
+	for(int k = 0; k < i - 2; k++){
+		for(int l = 0; l < n; l++){
+			second_prune = second_prune && (bool)board[k][l];
+		}
+	}
+	if(i >= 2){
+		for(int l = 0; l < j - 1; l++){
+			second_prune = second_prune && (bool)board[i - 2][l];
+		}
+	}
+	if(!second_prune){
+		return sol;
+	}
+
+	int original_horses = count_new_horses(board);
+
 	if(i == n){
-		if(is_solution(board))
+		if(is_solution(board)){
+			if(original_horses < upper_bound){
+				upper_bound = original_horses;
+				//cout << upper_bound << endl;
+			}
 			return board;
+		}
 		else
 			return sol;
 	}
 
-
-	int min_horses = n*n;
-
 	// cout << "FUNCTION CALL:\t" << i << TAB << j << endl;
 	// print_board(board);
 
-	vector<vector<char> > board_with_horse = board;
-	add_horse(board_with_horse, i, j, NEW_HORSE);
-	
-	if(j == (int)board.size() - 1){j = 0; i++; } else{j++; }
+	int jp = (j == (int)board.size() - 1)? 0: j + 1;
+	int ip = (j == (int)board.size() - 1)? i + 1: i;
 
-	vector<vector<char> > sol_with = solve(board_with_horse, i, j);
-	vector<vector<char> > sol_without = solve(board, i, j);
-
-	if(is_solution(sol_with)){
-		min_horses = min(count_new_horses(sol_with), min_horses);
-		sol = sol_with;
-	}
-
+	vector<vector<char> > sol_without = solve(board, ip, jp);
 	if(is_solution(sol_without)){
-		min_horses = min(count_new_horses(sol_without), min_horses);
-		sol = sol_without;
+		horses = count_new_horses(sol_without);
+		if(horses < min_horses){
+			min_horses = horses;
+			sol = sol_without;
+		}	
 	}
 
+	//I check whether with the addition of the horse, wouldnt I be generating a suboptimal solution
+	bool first_prune = (original_horses + 1> upper_bound);
+
+	if(!first_prune){
+		vector<vector<char> > board_with_horse = board;
+		add_horse(board_with_horse, i, j, NEW_HORSE);
+		vector<vector<char> > sol_with = solve(board_with_horse, ip, jp);
+		if(is_solution(sol_with)){
+			horses = count_new_horses(sol_with);
+			if(horses < min_horses){
+				min_horses = horses;
+				sol = sol_with;
+			}	
+		}
+	}
 	return sol;
 	
 }
-
-// vector<vector<char> > solve(vector<vector<char> > board, int i, int j){
-
-
-// 	pair<int, int> first_blank = find_blank(board);
-
-// 	//Si llego al final del tablero sin encontrar 0 significa que esta todo cubierto, entonces, devuelvo el que me pasan
-// 	horses = count_new_horses(board);
-
-// 	if(i == n){
-// 		if(horses < upper_bound)
-// 			upper_bound = horses;
-// 		return board;
-// 	}
-
-// 	//en i, j esta el primer casillero no expuesto
-
-// 	int x = first_blank.first, y = first_blank.second;
-// 	vector<vector<char> > sug_board, solution;
-// 	int horse_x, horse_y;
-
-// // COMENTAR ESTE IF PARA SACAR LA PODA
-
-// 	// if(horses + 1 >= upper_bound)
-// 	//  	return solution;
-
-	
-// 	for(unsigned int i = 0; i < offsets.size(); i++){
-// 		horse_x = x + offsets[i].first;
-// 		horse_y = y + offsets[i].second;
-// 		if(horse_x >= 0 && horse_x < n && horse_y >= 0 && horse_y < n){
-// 			sug_board = board;	
-// 			add_horse(sug_board, horse_x, horse_y, NEW_HORSE);
-// 			sug_board = solve(sug_board);
-// 			if(!sug_board.empty()){
-// 				horses = count_new_horses(sug_board);
-// 				if(horses <= min_horses){
-// 					min_horses = horses;
-// 					solution = sug_board;
-// 				}
-// 			}
-// 		}
-// 	}
-
-// 	return solution;
-// }
