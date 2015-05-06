@@ -30,14 +30,14 @@ using namespace std;
 int main(){
 	int n, km, kb;
 	cin >> n >> km >> kb;
-	vector<Phase> race(n);
+	vector<Phase> race(n); //O(n)
 				
-	for(int i = 0; i < n; i++)
+	for(int i = 0; i < n; i++)//O(n)
 		cin >> race[i].BMX_cost >> race[i].motox_cost >> race[i].buggy_cost;
 		
 	VECT_DE_MATRIZ dakkar(n);
 	
-	for(int i=0; i<n; i++){
+	for(int i=0; i<n; i++){	//O(n*[min(kb,n)]*[min(km,n)])
 		dakkar[i].resize(kb+1);
 		for (int b=0; b<kb+1; b++){
 			dakkar[i][b].resize(km+1);
@@ -53,7 +53,7 @@ int main(){
 	int etapa_actual = 0;	//componente X que representa a la etapa va desde 0 a n-1
 	//comienzo llenando la matriz para la etapa X=cero y los Y, Z correspondientes
 	//dakkar[X][Y][Z]
-	if (n > 0){//si hay por lo menos una etapa:
+	if (n > 0){//si hay por lo menos una etapa:		O(1)	(las operaciones dentro del if son cantidad constante* O(1))
 		//el minimo costo de usar Y=0 buggis y Z=0 motos hasta la primera etapa (etapa X=0) es usar la BMX, entonces:
 		dakkar[etapa_actual][0][0].costo_min = race[etapa_actual].BMX_cost;
 		dakkar[etapa_actual][0][0].vehiculo = BMX;
@@ -74,60 +74,60 @@ int main(){
 	}
 	etapa_actual ++;
 	
-	while(etapa_actual < n){
-		llenarCostosMinimos(dakkar, etapa_actual, kb, km, race);
+	while(etapa_actual < n){ //O(n)
+		llenarCostosMinimos(dakkar, etapa_actual, kb, km, race);	//O([min(kb,n)]*[min(km,n)])
 		etapa_actual ++;
 	}
 	//imprimirDakkar(dakkar);
 	
-	devolverResultado(dakkar, n-1, kb, km);
+	devolverResultado(dakkar, n-1, kb, km);		//O(n) + O([min(kb,n)]*[min(km,n)])
 }
 
-void llenarCostosMinimos (VECT_DE_MATRIZ & dd, int e, int k_b, int k_m, vector<Phase>& v){
+void llenarCostosMinimos (VECT_DE_MATRIZ & dd, int e, int k_b, int k_m, vector<Phase>& v){	//O([min(kb,n)]*[min(km,n)])
 	int etapa_ant = e-1;
 	int coste_usar_buggy = INT_MAX;
 	int coste_usar_moto = INT_MAX;
 	int coste_usar_bmx = INT_MAX;
 	int coste_min;
-	int min_1 = min(e+1,k_b);
-	int min_2 = min(e+1,k_m);
+	int min_1 = min(e+1,k_b);	//O(1)
+	int min_2 = min(e+1,k_m);	//O(1)
 	
 	for(int b = 0; b<= min_1; b++){	//b representa "Y" la cantidad exacta de buggis usadas hasta la etapa actual
 		for(int m = 0; (m<= min_2) && (m+b<=e+1); m++){	//m representa "Z" la cantidad exacta de motos usadas hasta la etapa actual
 			//se puede usar b buggis y m motos hasta la etapa actual de tres maneras distintas
 			
-			if(b-1>=0){
+			if(b-1>=0){//O(1)
 				//uso buggy ahora, necesito saber el costo minimo de haber usado b-1 buggys y m motos hasta la etapa anterior 
 				coste_usar_buggy = dd[etapa_ant][b-1][m].costo_min + v[e].buggy_cost;
 			}
 			
-			if(m-1>=0){
+			if(m-1>=0){//O(1)
 				//uso moto ahora, necesito saber el costo minimo de haber usado b buggys y m-1 motos hasta la etapa anterior 
 				coste_usar_moto = dd[etapa_ant][b][m-1].costo_min + v[e].motox_cost;
 			}
 			
-			if(b+m < e+1){
+			if(b+m < e+1){//O(1)
 				//uso moto ahora, necesito saber el costo minimo de haber usado b buggys y m motos hasta la etapa anterior 
 				coste_usar_bmx = dd[etapa_ant][b][m].costo_min + v[e].BMX_cost;
 			}
 			
 			//ahora buscamos el minimo de haber usado un vehiculo en la etapa actual
-			coste_min = minimo(coste_usar_bmx, coste_usar_moto, coste_usar_buggy);
+			coste_min = minimo(coste_usar_bmx, coste_usar_moto, coste_usar_buggy);	//O(1)
 			switch (coste_min)
 			{
-				case BMX:
+				case BMX:	//O(1)
 					dd[e][b][m].costo_min = coste_usar_bmx;
 					dd[e][b][m].vehiculo = BMX;
 					dd[e][b][m].fil_ant = b;
 					dd[e][b][m].col_ant = m;
 					break;
-				case MOTOX:
+				case MOTOX:		//O(1)
 					dd[e][b][m].costo_min = coste_usar_moto;
 					dd[e][b][m].vehiculo = MOTOX;
 					dd[e][b][m].fil_ant = b;
 					dd[e][b][m].col_ant = m-1;
 					break;
-				case BUGGY:
+				case BUGGY:		//O(1)
 					dd[e][b][m].costo_min = coste_usar_buggy;
 					dd[e][b][m].vehiculo = BUGGY;
 					dd[e][b][m].fil_ant = b-1;
@@ -135,15 +135,15 @@ void llenarCostosMinimos (VECT_DE_MATRIZ & dd, int e, int k_b, int k_m, vector<P
 					break;
 			}
 			
-			coste_usar_buggy = INT_MAX;
-			coste_usar_moto = INT_MAX;
-			coste_usar_bmx = INT_MAX;
+			coste_usar_buggy = INT_MAX;	//O(1)
+			coste_usar_moto = INT_MAX;	//O(1)
+			coste_usar_bmx = INT_MAX;	//O(1)
 			
 		}
 	}
 }
 
-int minimo(int usar_bmx, int usar_moto, int usar_buggy){
+int minimo(int usar_bmx, int usar_moto, int usar_buggy){	//O(1)
 	if (usar_bmx <= usar_moto){
 		if (usar_bmx <= usar_buggy){
 			return BMX;
@@ -157,14 +157,14 @@ int minimo(int usar_bmx, int usar_moto, int usar_buggy){
 	}
 }
 
-void devolverResultado(VECT_DE_MATRIZ & dd, int ultima_etapa, int k_b, int k_m){
+void devolverResultado(VECT_DE_MATRIZ & dd, int ultima_etapa, int k_b, int k_m){	//O(n) + O([min(kb,n)]*[min(km,n)])
 	int aux = min(ultima_etapa+1, k_b);
 	int aux_2 = min(ultima_etapa+1, k_m);
 	int y,z;
 	int valor_minimo = INT_MAX;
 	unsigned int vehiculo;
 	stack<unsigned int> pila;
-	for(int b=0; b<=aux; b++){
+	for(int b=0; b<=aux; b++){	//O([min(kb,n)]*[min(km,n)])
 		for(int m=0; m<=aux_2; m++){
 			if(valor_minimo > dd[ultima_etapa][b][m].costo_min){
 				valor_minimo = dd[ultima_etapa][b][m].costo_min;
@@ -175,13 +175,13 @@ void devolverResultado(VECT_DE_MATRIZ & dd, int ultima_etapa, int k_b, int k_m){
 	}
 	
 	cout << valor_minimo;
-	for(int i=0; i<=ultima_etapa; i++){
+	for(int i=0; i<=ultima_etapa; i++){	//O(n)
 		pila.push(dd[ultima_etapa - i][y][z].vehiculo);
 		y = dd[ultima_etapa - i][y][z].fil_ant;
 		z = dd[ultima_etapa - i][y][z].col_ant;
 	}
 	
-	while (!pila.empty()){
+	while (!pila.empty()){	//O(n)
 		vehiculo = pila.top();
 		cout << " " << vehiculo;
 		pila.pop();
