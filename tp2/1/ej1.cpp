@@ -31,13 +31,18 @@ int main(){
 	int n, km, kb;
 	cin >> n >> km >> kb;
 	vector<Phase> race(n); //O(n)
-				
-	for(int i = 0; i < n; i++)//O(n)
+	stack<unsigned int> pila;	//Una vez llena toda la estructura sirve para guardar los sucesores recorriendo hacia atras el cubo y devolver el orden de los vehiculos
+	int costo_minimo = 0;
+	unsigned int movil;
+	
+	//*************armado e inicializacion de la estructura que guarda el costo de cada vehiculo por etapa*****************			
+	for(int i = 0; i < n; i++){//O(n)
 		cin >> race[i].BMX_cost >> race[i].motox_cost >> race[i].buggy_cost;
+	}//***********fin inicializacion de la primera estructura*******************************************	
 		
 	VECT_DE_MATRIZ dakkar(n);
 	
-	for(int i=0; i<n; i++){	//O(n*[min(kb,n)]*[min(km,n)])
+	/*for(int i=0; i<n; i++){	//O(n*[min(kb,n)]*[min(km,n)])
 		dakkar[i].resize(kb+1);
 		for (int b=0; b<kb+1; b++){
 			dakkar[i][b].resize(km+1);
@@ -45,14 +50,31 @@ int main(){
 				dakkar[i][b][m].fil_ant = 0;
 				dakkar[i][b][m].col_ant = 0;
 				dakkar[i][b][m].costo_min = INT_MAX;
-				dakkar[i][b][m].vehiculo = 5;
+				dakkar[i][b][m].vehiculo = 5;*/
+	int coor_z = 2;
+	int coor_y = 2;
+	
+	//*******************************se arma e inicializa la estructuta principal (2da estructura)*************************************
+	for(int x=0; x<n; x++){	//O(n*[min(kb,n)]*[min(km,n)])
+		dakkar[x].resize(min(coor_y,kb+1));
+		for (unsigned int y=0; y<dakkar[x].size(); y++){
+			dakkar[x][y].resize(min(coor_z,km+1));
+			for(unsigned int z=0; z<dakkar[x][y].size(); z++){
+				dakkar[x][y][z].fil_ant = 0;
+				dakkar[x][y][z].col_ant = 0;
+				dakkar[x][y][z].costo_min = INT_MAX;
+				dakkar[x][y][z].vehiculo = 5;
 			}
 		}
-	}
+		coor_y ++;
+		coor_z ++;
+	}//*******************************fin inicializacion de estructuta principal****************************************
 	
-	int etapa_actual = 0;	//componente X que representa a la etapa va desde 0 a n-1
-	//comienzo llenando la matriz para la etapa X=cero y los Y, Z correspondientes
+	int etapa_actual = 0;	//componente X que representa a la etapa, va desde 0 a n-1
+	//comienzo llenando la matriz para la etapa X=0 y los Y, Z correspondientes
 	//dakkar[X][Y][Z]
+	
+	//**************************************se inicializa los valores para la primera etapa (X=0)***********************
 	if (n > 0){//si hay por lo menos una etapa:		O(1)	(las operaciones dentro del if son cantidad constante* O(1))
 		//el minimo costo de usar Y=0 buggis y Z=0 motos hasta la primera etapa (etapa X=0) es usar la BMX, entonces:
 		dakkar[etapa_actual][0][0].costo_min = race[etapa_actual].BMX_cost;
@@ -71,16 +93,26 @@ int main(){
 		dakkar[etapa_actual][0][1].vehiculo = MOTOX;
 		dakkar[etapa_actual][0][1].fil_ant = 0;
 		dakkar[etapa_actual][0][1].col_ant = 0;
-	}
+	}//*********************************fin inicializacion de la primera etapa********************************************
+	
 	etapa_actual ++;
 	
+	//***********se llena la estructura para las siguientes etapas en orden ascendente por etapa************************+
 	while(etapa_actual < n){ //O(n)
 		llenarCostosMinimos(dakkar, etapa_actual, kb, km, race);	//O([min(kb,n)]*[min(km,n)])
 		etapa_actual ++;
-	}
-	//imprimirDakkar(dakkar);
+	}//**********fin del llenado de la estructura hasta la ultima etapa************************************** 
+				
+	costo_minimo = devolverResultado(dakkar, n-1, kb, km, pila);		//O(n) + O([min(kb,n)]*[min(km,n)])
 	
-	devolverResultado(dakkar, n-1, kb, km);		//O(n) + O([min(kb,n)]*[min(km,n)])
+	cout << costo_minimo;
+	
+	while (!pila.empty()){	//O(n)
+		movil = pila.top();
+		cout << " " << movil;
+		pila.pop();
+	}
+	cout << endl;
 }
 
 void llenarCostosMinimos (VECT_DE_MATRIZ & dd, int e, int k_b, int k_m, vector<Phase>& v){	//O([min(kb,n)]*[min(km,n)])
@@ -157,13 +189,13 @@ int minimo(int usar_bmx, int usar_moto, int usar_buggy){	//O(1)
 	}
 }
 
-void devolverResultado(VECT_DE_MATRIZ & dd, int ultima_etapa, int k_b, int k_m){	//O(n) + O([min(kb,n)]*[min(km,n)])
+int devolverResultado(VECT_DE_MATRIZ & dd, int ultima_etapa, int k_b, int k_m, stack< unsigned int > & p){	//O(n) + O([min(kb,n)]*[min(km,n)])
 	int aux = min(ultima_etapa+1, k_b);
 	int aux_2 = min(ultima_etapa+1, k_m);
 	int y,z;
 	int valor_minimo = INT_MAX;
-	unsigned int vehiculo;
-	stack<unsigned int> pila;
+	
+	//recorremos el vector de la etapa final (X=n-1) para buscar el minimo
 	for(int b=0; b<=aux; b++){	//O([min(kb,n)]*[min(km,n)])
 		for(int m=0; m<=aux_2; m++){
 			if(valor_minimo > dd[ultima_etapa][b][m].costo_min){
@@ -173,21 +205,15 @@ void devolverResultado(VECT_DE_MATRIZ & dd, int ultima_etapa, int k_b, int k_m){
 			}
 		}
 	}
-	
-	cout << valor_minimo;
+		
+	//vamos hacia atras recorriendo sucesores
 	for(int i=0; i<=ultima_etapa; i++){	//O(n)
-		pila.push(dd[ultima_etapa - i][y][z].vehiculo);
+		p.push(dd[ultima_etapa - i][y][z].vehiculo);
 		y = dd[ultima_etapa - i][y][z].fil_ant;
 		z = dd[ultima_etapa - i][y][z].col_ant;
 	}
 	
-	while (!pila.empty()){	//O(n)
-		vehiculo = pila.top();
-		cout << " " << vehiculo;
-		pila.pop();
-	}
-	
-	cout << endl;
+	return valor_minimo;
 }
 
 void imprimirDakkar(VECT_DE_MATRIZ & dd){

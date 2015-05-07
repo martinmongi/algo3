@@ -22,5 +22,5 @@ struct minimoCase{
 
 void llenarCostosMinimos (vector<vector<vector<minimoCase> > > & dd, int etapa, int k_b, int k_m, vector<Phase>& v);
 int minimo(int usar_bmx, int usar_moto, int usar_buggy);
-void devolverResultado(vector<vector<vector<minimoCase> > > & dd, int cant_etapas, int K_b, int k_m);
+int devolverResultado(vector<vector<vector<minimoCase> > > & dd, int cant_etapas, int K_b, int k_m, stack<unsigned int> & pila);
 void imprimirDakkar(vector<vector<vector<minimoCase> > > & dd);
