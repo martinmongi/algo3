@@ -41,16 +41,7 @@ int main(){
 	}//***********fin inicializacion de la primera estructura*******************************************	
 		
 	VECT_DE_MATRIZ dakkar(n);
-	
-	/*for(int i=0; i<n; i++){	//O(n*[min(kb,n)]*[min(km,n)])
-		dakkar[i].resize(kb+1);
-		for (int b=0; b<kb+1; b++){
-			dakkar[i][b].resize(km+1);
-			for(int m=0; m<km+1; m++){
-				dakkar[i][b][m].fil_ant = 0;
-				dakkar[i][b][m].col_ant = 0;
-				dakkar[i][b][m].costo_min = INT_MAX;
-				dakkar[i][b][m].vehiculo = 5;*/
+		
 	int coor_z = 2;
 	int coor_y = 2;
 	
@@ -113,6 +104,7 @@ int main(){
 		pila.pop();
 	}
 	cout << endl;
+	return 0;
 }
 
 void llenarCostosMinimos (VECT_DE_MATRIZ & dd, int e, int k_b, int k_m, vector<Phase>& v){	//O([min(kb,n)]*[min(km,n)])
