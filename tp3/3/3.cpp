@@ -10,11 +10,10 @@ vector<bool> solve(vector<vector<bool> > &g){
 	int potential_vertices, max_pv, best_vertex;
 	vector<bool> taken(g.size(), false);
 	vector<bool> vertices(g.size(), false);
-	int stop = 0;
+	int stop = g.size();
 	
-	while(v_count(taken) < g.size() /*&& stop < g.size()*/){
-		print_vector(taken);
-		print_vector(vertices);
+	while(v_count(taken) < g.size() && stop--){
+
 		//choose vertex that takes the most not taken vertices
 		max_pv = 0;
 		for(int i = 0; i < g.size(); i++){
@@ -36,7 +35,6 @@ vector<bool> solve(vector<vector<bool> > &g){
 			if(g[best_vertex][j])
 				taken[j] = true;
 		}
-		stop++;
 
 	}
 
