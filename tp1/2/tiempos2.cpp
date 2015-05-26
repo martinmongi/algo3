@@ -1,23 +1,41 @@
 #include "problema_2.h"
 #include <iostream>
+//#include <stdio.h>
+//#include <climits>
+//#include <stdlib.h>
 
 using namespace std;
+
+unsigned long long rdtsc(){
+        //en edx:eax esta el valor del tsc
+        asm volatile("rdtsc");
+
+}  
 
 #define SPACE " "
 
 int main(){
+	unsigned long long inicio,total;
+	
 	int n, i;
 	cin >> n;		
 	while (n!=0){
-		
+		cout << n << " ";
 		vector<Frequency> frequencies(n);
-
+		
+		inicio = rdtsc(); //comienza el conteo de los ticks de cloc
+		
 		for(i = 0; i < n; i++){ //O(n)
 			cin >> frequencies[i].cost >> frequencies[i].i >> frequencies[i].f;
 			frequencies[i].id = i + 1;
 		}
 
 		vector<Frequency> out = solve(frequencies); //T(n)
+		
+		total = rdtsc() - inicio; //obtengo resultado de tiempos de cloc
+		//total = total/log(n);
+		cout << total << endl;
+		
 		int total_cost = 0;
 		int final = -1;
 
@@ -25,12 +43,12 @@ int main(){
 			total_cost += (out[i].f - out[i].i) * out[i].cost;
 		}
 
-		cout << total_cost << endl;
+		//cout << total_cost << endl;
 		
-		for(i = 0; i < out.size(); i++){
+		/*for(i = 0; i < out.size(); i++){
 			cout << out[i].i << SPACE << out[i].f << SPACE << out[i].id << endl;
-		}
-		cout << "-1" << endl;
+		}*/
+		//cout << "-1" << endl;
 		cin >> n;
 	}
 	return 0;
