@@ -1,6 +1,7 @@
 #include <vector>
 #include <iostream>
 #include <cassert>
+#include <queue>
 
 #define NORTH 0
 #define EAST 1
@@ -25,6 +26,7 @@ private:
 	std::vector<std::vector<int> > h_streets;
 	std::vector<std::vector<int> > v_streets;
 	std::vector<std::vector<int> > corners;
+	std::vector<std::queue<Corner> > hashed_queues;
 	std::vector<Corner> queue;
 	void Insert(Corner &c);
 	int CostOfMoving(int y, int x, int direction);
@@ -43,6 +45,12 @@ Grid::Grid(){
 	// std::cout << "iv    " << iv << NEWLINE;
 	// std::cout << "bh    " << bh << NEWLINE;
 	// std::cout << "bv    " << bv << NEWLINE;
+
+	//Initialize queues
+	std::queue<Corner> q;
+	for(int i = 0; i <= s; i++){
+		hashed_queues.push_back(q);
+	}
 
 	//Initialize h_streets
 	std::vector<int> a(m-1);
@@ -151,13 +159,18 @@ int Grid::Solve(){
 	c.y = iv;
 	c.x = ih;
 	c.cost = 0;
+	hashed_queues[c.cost].push(c);
 	Insert(c);
-	int i = 0, x, y, cost;
+	int i = 0, x, y, cost, cost_i = 0;
 
-	while(/*i < queue.size() &&*/ ((queue[i].cost < s) || ((bv == queue[i].x) && (y == queue[i].y)))) {
-		x = queue[i].x;
-		y = queue[i].y;
-		cost = queue[i].cost;
+	// while(/*i < queue.size() &&*/ ((queue[i].cost <= s) || ((bv == queue[i].x) && (y == queue[i].y)))) {
+	while((cost_i <= s) /*|| ((bv == hashed_queues[cost_i].front().x) && (bh == hashed_queues[cost_i].front().y))*/) {
+		x = hashed_queues[cost_i].front().x;
+		y = hashed_queues[cost_i].front().y;
+		cost = hashed_queues[cost_i].front().cost;
+		// x = queue[i].x;
+		// y = queue[i].y;
+		// cost = queue[i].cost;
 
 		//move north
 		c.x = x;
@@ -166,7 +179,8 @@ int Grid::Solve(){
 		if((c.y >= 0) && (c.x >= 0) && (c.y < corners.size()) && (c.x < corners[0].size()) && (corners[c.y][c.x] < 0)){
 			c.cost = cost + CostOfMoving(y, x, NORTH);
 			corners[c.y][c.x] = c.cost;
-			Insert(c);
+			hashed_queues[c.cost].push(c);
+			//Insert(c);
 		}
 
 		//move south
@@ -175,7 +189,8 @@ int Grid::Solve(){
 		if((c.y >= 0) && (c.x >= 0) && (c.y < corners.size()) && (c.x < corners[0].size()) && (corners[c.y][c.x] < 0)){
 			c.cost = cost + CostOfMoving(y, x, SOUTH);
 			corners[c.y][c.x] = c.cost;
-			Insert(c);
+			hashed_queues[c.cost].push(c);			
+			// Insert(c);
 		}
 		
 		//move east
@@ -184,7 +199,8 @@ int Grid::Solve(){
 		if((c.y >= 0) && (c.x >= 0) && (c.y < corners.size()) && (c.x < corners[0].size()) && (corners[c.y][c.x] < 0)){
 			c.cost = cost + CostOfMoving(y, x, EAST);
 			corners[c.y][c.x] = c.cost;
-			Insert(c);
+			hashed_queues[c.cost].push(c);
+			// Insert(c);
 		}
 		
 		//move west
@@ -193,15 +209,15 @@ int Grid::Solve(){
 		if((c.y >= 0) && (c.x >= 0) && (c.y < corners.size()) && (c.x < corners[0].size()) && (corners[c.y][c.x] < 0)){
 			c.cost = cost + CostOfMoving(y, x, WEST);
 			corners[c.y][c.x] = c.cost;
-			Insert(c);
+			hashed_queues[c.cost].push(c);
+			// Insert(c);
 		}
 		
-		i++;
+		hashed_queues[cost_i].pop();
+		if(hashed_queues[cost_i].empty())
+			cost_i++;
 	}
-	if(queue[i].cost <= s)
-		return s - queue[i].cost;
-	else
-		return -1;
+	return corners[bv][bh];
 }
 
 void Grid::Insert(Corner &c){

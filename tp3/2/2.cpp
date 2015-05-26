@@ -2,66 +2,8 @@
 #include <vector>
 #include <set>
 #include <cassert>
-
+#include "../misc.h"
 using namespace std;
-
-bool min_set(vector<bool> &a, vector<bool> &b){
-	int count_a = 0, count_b = 0;
-	for(int i = 0; i < a.size(); i++){
-		if(a[i])
-			count_a++;
-		if(b[i])
-			count_b++;
-	}
-	return (count_a <= count_b);
-}
-
-bool dominant(vector<vector<bool> > &g, vector<bool> &v){
-	// cout << "Probando dominante:\n";
-	// for(int i = 0; i < v.size(); i++){
-	// 	cout << v[i] << " ";
-	// }
-	// cout << "\n";
-
-	vector<bool> seen(v.size(), false);
-	for(int i = 0; i < v.size(); i++){
-		if(v[i]){
-			seen[i] = true;
-			for(int j = 0; j < v.size(); j++){
-				if(g[i][j])
-					seen[j] = true;
-			}
-		}
-	}
-	for(int i = 0; i < v.size(); i++){
-		if(!seen[i])
-			return false;
-	}
-	// cout << "DOMINANT" << endl;
-	return true;
-}
-bool independent(vector<vector<bool> > &g, vector<bool> &v){
-	
-	// cout << "Probando independiente:\n";
-	// for(int i = 0; i < v.size(); i++){
-	// 	cout << v[i] << " ";
-	// }
-	// cout << "\n";
-
-	//independence check
-	for(int i = 0; i < v.size(); i++){
-		if(v[i]){
-			for(int j = i + 1; j < v.size(); j++){
-				if(v[j] && g[i][j])
-					return false;
-			}
-		}
-	}
-	
-//	cout << "INDEPENDENT" << endl;
-	return true;
-
-}
 
 vector<bool> solve(vector<vector<bool> > &g, int vertices, vector<bool> v, int i){
 	if(i == vertices){
@@ -84,7 +26,7 @@ vector<bool> solve(vector<vector<bool> > &g, int vertices, vector<bool> v, int i
 		if(sol2.empty())
 			return sol1;
 		else
-			if(min_set(sol1,sol2))
+			if(v_count(sol1) <= v_count(sol2))
 				return sol1;
 			else
 				return sol2;
@@ -92,33 +34,14 @@ vector<bool> solve(vector<vector<bool> > &g, int vertices, vector<bool> v, int i
 }
 
 int main(){
-	int vertices, edges, a, b;
-	cin >> vertices;
 
-	vector<vector<bool> > g(vertices, vector<bool>(vertices, false));
-
-	while(true){
-		cin >> a >> b;
-		if(cin.eof()) break;
-		assert(a < vertices);
-		assert(b < vertices);
-		g[a][b] = true;
-		g[b][a] = true;
-	}
-/*
-	for(int i = 0; i < vertices; i++){
-		cout << "Adyacentes a " << i << ":\n";
-		for(int j = 0; j < vertices; j++){
-			if(g[i][j])
-				cout << j << " ";
-		}
-		cout << "\n";
-	}*/
+	vector<vector<bool> > g = graph_input();
+	int vertices = g.size();
 
 	vector<bool> initial_guess(vertices, false);
 	vector<bool> result = solve(g, vertices, initial_guess, 0);
-	for(int i = 0; i < result.size(); i++){
-		cout << result[i]<< " ";
-	}
-	cout << "\n";
+	
+	print_vector(result);
+
+	return 0;
 }
