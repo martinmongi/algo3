@@ -3,32 +3,12 @@
 #include <set>
 #include <cassert>
 
+#define SPACE " "
+#define NEWLINE "\n"
+
 using namespace std;
 
-template <typename T>
-void print_vector(vector<T> &v){
-	for(int i = 0; i < v.size(); i++){
-		cout << v[i]<< " ";
-	}
-	cout << "\n";
-}
-
-vector<vector<bool> > graph_input(){
-	int a, b, vertices;
-	cin >> vertices;
-	vector<vector<bool> > g(vertices, vector<bool>(vertices, false));
-
-	while(true){
-		cin >> a >> b;
-		if(cin.eof()) break;
-		assert(a < vertices);
-		assert(b < vertices);
-		g[a][b] = true;
-		g[b][a] = true;
-	}
-	return g;
-}
-
+//O(n)
 int v_count(vector<bool> &a){
 	int count = 0;
 	for(int i = 0; i < a.size(); i++){
@@ -38,6 +18,43 @@ int v_count(vector<bool> &a){
 	return count;
 }
 
+//O(n)
+template <typename T>
+void print_vector(vector<T> &v){
+	for(int i = 0; i < v.size(); i++){
+		cout << v[i] << " ";
+	}
+	cout << "\n";
+}
+
+void print_result(vector<bool> &v){
+	cout << v_count(v) << SPACE;
+	for(int i = 0; i < v.size(); i++){
+		if(v[i])
+		cout << i+1 << " ";
+	}
+	cout << NEWLINE;
+}
+
+vector<vector<bool> > graph_input(){
+	int a, b, vertices, edges;
+	cin >> vertices >> edges;
+	vector<vector<bool> > g(vertices, vector<bool>(vertices, false));
+
+	while(edges--){
+		cin >> a >> b;
+		a--; b--;
+		assert(a < vertices);
+		assert(b < vertices);
+		g[a][b] = true;
+		g[b][a] = true;
+	}
+	return g;
+}
+
+
+
+//O(v^2)
 bool dominant(vector<vector<bool> > &g, vector<bool> &v){
 	
 	vector<bool> seen(v.size(), false);
@@ -59,6 +76,7 @@ bool dominant(vector<vector<bool> > &g, vector<bool> &v){
 	return true;
 }
 
+//O(v^2)
 bool independent(vector<vector<bool> > &g, vector<bool> &v){
 	
 	for(int i = 0; i < v.size(); i++){
