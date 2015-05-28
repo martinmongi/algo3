@@ -160,7 +160,7 @@ int Grid::Solve(){
 	c.x = ih;
 	c.cost = 0;
 	hashed_queues[c.cost].push(c);
-	Insert(c);
+	//Insert(c);
 	int i = 0, x, y, cost, cost_i = 0;
 
 	// while(/*i < queue.size() &&*/ ((queue[i].cost <= s) || ((bv == queue[i].x) && (y == queue[i].y)))) {
@@ -168,6 +168,7 @@ int Grid::Solve(){
 		x = hashed_queues[cost_i].front().x;
 		y = hashed_queues[cost_i].front().y;
 		cost = hashed_queues[cost_i].front().cost;
+		//std::cout << x << SPACE << y << SPACE << cost << NEWLINE;
 		// x = queue[i].x;
 		// y = queue[i].y;
 		// cost = queue[i].cost;
@@ -179,7 +180,7 @@ int Grid::Solve(){
 		if((c.y >= 0) && (c.x >= 0) && (c.y < corners.size()) && (c.x < corners[0].size()) && (corners[c.y][c.x] < 0)){
 			c.cost = cost + CostOfMoving(y, x, NORTH);
 			corners[c.y][c.x] = c.cost;
-			hashed_queues[c.cost].push(c);
+			if(c.cost <= s) hashed_queues[c.cost].push(c);
 			//Insert(c);
 		}
 
@@ -189,7 +190,7 @@ int Grid::Solve(){
 		if((c.y >= 0) && (c.x >= 0) && (c.y < corners.size()) && (c.x < corners[0].size()) && (corners[c.y][c.x] < 0)){
 			c.cost = cost + CostOfMoving(y, x, SOUTH);
 			corners[c.y][c.x] = c.cost;
-			hashed_queues[c.cost].push(c);			
+			if(c.cost <= s) hashed_queues[c.cost].push(c);			
 			// Insert(c);
 		}
 		
@@ -199,7 +200,7 @@ int Grid::Solve(){
 		if((c.y >= 0) && (c.x >= 0) && (c.y < corners.size()) && (c.x < corners[0].size()) && (corners[c.y][c.x] < 0)){
 			c.cost = cost + CostOfMoving(y, x, EAST);
 			corners[c.y][c.x] = c.cost;
-			hashed_queues[c.cost].push(c);
+			if(c.cost <= s) hashed_queues[c.cost].push(c);
 			// Insert(c);
 		}
 		
@@ -209,12 +210,12 @@ int Grid::Solve(){
 		if((c.y >= 0) && (c.x >= 0) && (c.y < corners.size()) && (c.x < corners[0].size()) && (corners[c.y][c.x] < 0)){
 			c.cost = cost + CostOfMoving(y, x, WEST);
 			corners[c.y][c.x] = c.cost;
-			hashed_queues[c.cost].push(c);
+			if(c.cost <= s) hashed_queues[c.cost].push(c);
 			// Insert(c);
 		}
 		
 		hashed_queues[cost_i].pop();
-		if(hashed_queues[cost_i].empty())
+		while(cost_i < hashed_queues.size() && hashed_queues[cost_i].empty())
 			cost_i++;
 	}
 	return corners[bv][bh];

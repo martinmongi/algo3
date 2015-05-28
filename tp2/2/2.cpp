@@ -5,7 +5,7 @@ using namespace std;
 
 int main(){
 	Grid city;
-	// city.PrintGrid();
+	city.PrintGrid();
 	cout << city.Solve() << endl;
 	city.PrintCorners();
 	return 0;
