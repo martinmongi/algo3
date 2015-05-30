@@ -12,7 +12,7 @@
 #define SPACE ' '
 
 struct Corner{
-	int y, x, cost;
+	int y, x, soldiers_left;
 };
 
 class Grid{
@@ -28,12 +28,10 @@ private:
 	std::vector<std::vector<int> > corners;
 	std::vector<std::queue<Corner> > hashed_queues;
 	std::vector<Corner> queue;
-	void Insert(Corner &c);
 	int CostOfMoving(int y, int x, int direction);
 };
 
 Grid::Grid(){
-	int buff;
 	std::cin >> n >> m >> s;
 	std::cin >> ih >> iv >> bh >> bv;
 	ih--; iv--; bh--; bv--;
@@ -65,31 +63,28 @@ Grid::Grid(){
 	}
 
 	//Initialize corners
-	std::vector<int> c(m, -1);
+	std::vector<int> c(m, 0);
 	for(int i = 0; i < n; i++){
 		corners.push_back(c);
 	}
 
-	corners[iv][ih] = 0;
+	corners[iv][ih] = s;
 
 	for(int i = 0; i < n - 1; i++){
 
 		for(int j = 0; j < m - 1; j++){
 			// std::cout << "FILA   " << i << "   COLUMNA   " << j << NEWLINE;
-			std::cin >> buff;
-			h_streets[i][j] = (buff - s > 0? buff - s : 0);
+			std::cin >> h_streets[i][j];
 			// std::cout << "h  " <<  i << SPACE << j << SPACE << buff << NEWLINE;
 		}
 		for(int j = 0; j < m; j++){
-			std::cin >> buff;
-			v_streets[i][j] = (buff - s > 0? buff - s : 0);
+			std::cin >> v_streets[i][j];
 			// std::cout << "v  " <<  i << SPACE << j << SPACE << buff << NEWLINE;
 		}	
 	}
 
 	for(int j = 0; j < m - 1; j++){
-		std::cin >> buff;
-		h_streets[n-1][j] = (buff - s > 0? buff - s : 0);
+		std::cin >> h_streets[n-1][j];
 		// std::cout << "h  " <<  n << SPACE << j << SPACE << buff << NEWLINE;
 	}
 	// std::cout << "SALE" << NEWLINE;
@@ -158,84 +153,95 @@ int Grid::Solve(){
 	Corner c;
 	c.y = iv;
 	c.x = ih;
-	c.cost = 0;
-	hashed_queues[c.cost].push(c);
+	c.soldiers_left = s;
+	hashed_queues[c.soldiers_left].push(c);
 	//Insert(c);
-	int i = 0, x, y, cost, cost_i = 0;
+	int i = 0, x, y, soldiers_left, soldiers_i = s;
 
-	// while(/*i < queue.size() &&*/ ((queue[i].cost <= s) || ((bv == queue[i].x) && (y == queue[i].y)))) {
-	while((cost_i <= s) /*|| ((bv == hashed_queues[cost_i].front().x) && (bh == hashed_queues[cost_i].front().y))*/) {
-		x = hashed_queues[cost_i].front().x;
-		y = hashed_queues[cost_i].front().y;
-		cost = hashed_queues[cost_i].front().cost;
-		//std::cout << x << SPACE << y << SPACE << cost << NEWLINE;
-		// x = queue[i].x;
-		// y = queue[i].y;
-		// cost = queue[i].cost;
+	while((soldiers_i > 0) /*|| ((bv == hashed_queues[cost_i].front().x) && (bh == hashed_queues[cost_i].front().y))*/) {
+		x = hashed_queues[soldiers_i].front().x;
+		y = hashed_queues[soldiers_i].front().y;
+		soldiers_left = hashed_queues[soldiers_i].front().soldiers_left;
+		std::cout << x << SPACE << y << SPACE << soldiers_left << SPACE << soldiers_i << NEWLINE;
 
 		//move north
 		c.x = x;
 		c.y = y - 1;
 		
-		if((c.y >= 0) && (c.x >= 0) && (c.y < corners.size()) && (c.x < corners[0].size()) && (corners[c.y][c.x] < 0)){
-			c.cost = cost + CostOfMoving(y, x, NORTH);
-			corners[c.y][c.x] = c.cost;
-			if(c.cost <= s) hashed_queues[c.cost].push(c);
-			//Insert(c);
+		if((c.y >= 0) && (c.x >= 0) && (c.y < corners.size()) && (c.x < corners[0].size())){
+			if(soldiers_left >= CostOfMoving(y, x, NORTH))
+				c.soldiers_left = soldiers_left;
+			else if(soldiers_left*2 <= CostOfMoving(y, x, NORTH))
+				c.soldiers_left = 0;
+			else
+				c.soldiers_left = c.soldiers_left - (CostOfMoving(y, x, NORTH) - c.soldiers_left);
+			std::cout << c.x << SPACE << c.y << SPACE << c.soldiers_left << NEWLINE;
+			if(c.soldiers_left > corners[c.y][c.x]){
+				corners[c.y][c.x] = c.soldiers_left;
+				hashed_queues[c.soldiers_left].push(c);
+				std::cout << "entro en la cola" << NEWLINE;
+			}
 		}
 
 		//move south
 		c.x = x;
 		c.y = y + 1;
-		if((c.y >= 0) && (c.x >= 0) && (c.y < corners.size()) && (c.x < corners[0].size()) && (corners[c.y][c.x] < 0)){
-			c.cost = cost + CostOfMoving(y, x, SOUTH);
-			corners[c.y][c.x] = c.cost;
-			if(c.cost <= s) hashed_queues[c.cost].push(c);			
-			// Insert(c);
+		if((c.y >= 0) && (c.x >= 0) && (c.y < corners.size()) && (c.x < corners[0].size())){
+			if(soldiers_left >= CostOfMoving(y, x, SOUTH))
+				c.soldiers_left = soldiers_left;
+			else if(soldiers_left*2 <= CostOfMoving(y, x, SOUTH))
+				c.soldiers_left = 0;
+			else
+				c.soldiers_left = c.soldiers_left - (CostOfMoving(y, x, SOUTH) - c.soldiers_left);
+			std::cout << c.x << SPACE << c.y << SPACE << c.soldiers_left << NEWLINE;
+			if(c.soldiers_left > corners[c.y][c.x]){
+				corners[c.y][c.x] = c.soldiers_left;
+				hashed_queues[c.soldiers_left].push(c);
+				std::cout << "entro en la cola" << NEWLINE;
+			}
 		}
 		
 		//move east
 		c.x = x + 1;
 		c.y = y;
-		if((c.y >= 0) && (c.x >= 0) && (c.y < corners.size()) && (c.x < corners[0].size()) && (corners[c.y][c.x] < 0)){
-			c.cost = cost + CostOfMoving(y, x, EAST);
-			corners[c.y][c.x] = c.cost;
-			if(c.cost <= s) hashed_queues[c.cost].push(c);
-			// Insert(c);
+		if((c.y >= 0) && (c.x >= 0) && (c.y < corners.size()) && (c.x < corners[0].size())){
+			if(soldiers_left >= CostOfMoving(y, x, EAST))
+				c.soldiers_left = soldiers_left;
+			else if(soldiers_left*2 <= CostOfMoving(y, x, EAST))
+				c.soldiers_left = 0;
+			else
+				c.soldiers_left = c.soldiers_left - (CostOfMoving(y, x, EAST) - c.soldiers_left);
+			std::cout << c.x << SPACE << c.y << SPACE << c.soldiers_left << NEWLINE;
+			if(c.soldiers_left > corners[c.y][c.x]){
+				corners[c.y][c.x] = c.soldiers_left;
+				hashed_queues[c.soldiers_left].push(c);
+				std::cout << "entro en la cola" << NEWLINE;
+			}
 		}
 		
 		//move west
 		c.x = x - 1;
 		c.y = y;
-		if((c.y >= 0) && (c.x >= 0) && (c.y < corners.size()) && (c.x < corners[0].size()) && (corners[c.y][c.x] < 0)){
-			c.cost = cost + CostOfMoving(y, x, WEST);
-			corners[c.y][c.x] = c.cost;
-			if(c.cost <= s) hashed_queues[c.cost].push(c);
-			// Insert(c);
+		if((c.y >= 0) && (c.x >= 0) && (c.y < corners.size()) && (c.x < corners[0].size())){
+			if(soldiers_left >= CostOfMoving(y, x, WEST))
+				c.soldiers_left = soldiers_left;
+			else if(soldiers_left*2 <= CostOfMoving(y, x, WEST))
+				c.soldiers_left = 0;
+			else
+				c.soldiers_left = c.soldiers_left - (CostOfMoving(y, x, WEST) - c.soldiers_left);
+			std::cout << c.x << SPACE << c.y << SPACE << c.soldiers_left << NEWLINE;
+			if(c.soldiers_left > corners[c.y][c.x]){
+				corners[c.y][c.x] = c.soldiers_left;
+				hashed_queues[c.soldiers_left].push(c);
+				std::cout << "entro en la cola" << NEWLINE;
+			}
 		}
 		
-		hashed_queues[cost_i].pop();
-		while(cost_i < hashed_queues.size() && hashed_queues[cost_i].empty())
-			cost_i++;
+		hashed_queues[soldiers_i].pop();
+		while(soldiers_i > 0 && hashed_queues[soldiers_i].empty()){
+			soldiers_i--;
+			std::cout << soldiers_i << NEWLINE;
+		}
 	}
 	return corners[bv][bh];
-}
-
-void Grid::Insert(Corner &c){
-	Corner aux;
-	queue.push_back(c);
-	int i = queue.size() - 1;
-	while(i > 0 && queue[i].cost < queue[i-1].cost){
-		//swap
-		aux.cost = queue[i-1].cost;
-		aux.x = queue[i-1].x;
-		aux.y = queue[i-1].y;
-		queue[i-1].cost = queue[i].cost;
-		queue[i-1].x = queue[i].x;
-		queue[i-1].y = queue[i].y;
-		queue[i].cost = aux.cost;
-		queue[i].x = aux.x;
-		queue[i].y = aux.y;
-		i--;
-	}
 }
