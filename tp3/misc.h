@@ -94,7 +94,9 @@ bool independent(vector<vector<bool> > &g, vector<bool> &v){
 void arg_error(std::string program_name){
 	std::cout << "Especifique el algoritmo que desea usar:" << std::endl;
 	std::cout << "\t" << program_name << " EXACT" << std::endl;
+	std::cout << "\t" << program_name << " NAIVE" << std::endl;
 	std::cout << "\t" << program_name << " GREEDY" << std::endl;
-	std::cout << "\t" << program_name << " LOCAL_SEARCH" << std::endl;
+	std::cout << "\t" << program_name << " LOCAL_SEARCH_NAIVE_1" << std::endl;
+	std::cout << "\t" << program_name << " LOCAL_SEARCH_GREEDY_1" << std::endl;
 	std::cout << "\t" << program_name << " GRASP" << std::endl;
 }
