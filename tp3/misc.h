@@ -52,8 +52,6 @@ vector<vector<bool> > graph_input(){
 	return g;
 }
 
-
-
 //O(v^2)
 bool dominant(vector<vector<bool> > &g, vector<bool> &v){
 	
@@ -97,6 +95,8 @@ void arg_error(std::string program_name){
 	std::cout << "\t" << program_name << " NAIVE" << std::endl;
 	std::cout << "\t" << program_name << " GREEDY" << std::endl;
 	std::cout << "\t" << program_name << " LOCAL_SEARCH_NAIVE_1" << std::endl;
-	std::cout << "\t" << program_name << " LOCAL_SEARCH_GREEDY_1" << std::endl;
-	std::cout << "\t" << program_name << " GRASP" << std::endl;
+	std::cout << "\t" << program_name << " LOCAL_SEARCH_GREEDY_1" << td::endl;
+	std::cout << "\t" << program_name << " LOCAL_SEARCH_NAIVE_2" << td::endl;
+	std::cout << "\t" << program_name << " LOCAL_SEARCH_GREEDY_2" << std::endl;
+	std::cout << "\t" << program_name << " GRASP (no implementada todavia)" << std::endl;
 }
