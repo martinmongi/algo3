@@ -95,8 +95,12 @@ void arg_error(std::string program_name){
 	std::cout << "\t" << program_name << " NAIVE" << std::endl;
 	std::cout << "\t" << program_name << " GREEDY" << std::endl;
 	std::cout << "\t" << program_name << " LOCAL_SEARCH_NAIVE_1" << std::endl;
-	std::cout << "\t" << program_name << " LOCAL_SEARCH_GREEDY_1" << td::endl;
-	std::cout << "\t" << program_name << " LOCAL_SEARCH_NAIVE_2" << td::endl;
+	std::cout << "\t" << program_name << " LOCAL_SEARCH_GREEDY_1" << std::endl;
+	std::cout << "\t" << program_name << " LOCAL_SEARCH_NAIVE_2" << std::endl;
 	std::cout << "\t" << program_name << " LOCAL_SEARCH_GREEDY_2" << std::endl;
-	std::cout << "\t" << program_name << " GRASP (no implementada todavia)" << std::endl;
+	std::cout << "\t" << program_name << " GRASP 0.9" << std::endl;
+}
+
+bool compare_vertices(std::pair<int, int> a, std::pair<int, int> b){
+	return a.second > b.second;
 }
