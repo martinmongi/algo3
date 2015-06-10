@@ -66,7 +66,9 @@ Grid::Grid(){
 	}
 
 	//Corner where they start with s soldiers
-	corners[iv][ih] = s;
+	corners[ih][iv] = s;
+	directions[ih][iv] = -1;
+
 
 	for(int i = 0; i < n - 1; i++){
 
@@ -83,7 +85,7 @@ Grid::Grid(){
 }
 
 void Grid::PrintCorners(){
-	std::vector<int> c(m, -1);
+
 	for(int i = 0; i < n; i++){
 		for(int j = 0; j < m; j++){
 			std::cout << corners[i][j] << TAB; 
@@ -123,36 +125,38 @@ void Grid::PrintTrajectory(){
 
 	std::stack<Corner> q;
 	Corner c;
-	c.x = bh;
-	c.y = bv;
+	c.x = bv;
+	c.y = bh;
 	q.push(c);
 
-	if(directions[c.y][c.x] <= 0){
+	if(directions[c.y][c.x] < 0){
 		std::cout << "0" << NEWLINE;
 		return;
 	}else{
 		std::cout << corners[c.y][c.x] << NEWLINE;
 	}
-	while(ih != c.x || iv != c.y){
+	while(iv != c.x || ih != c.y){
+		//std::cout << c.y << SPACE  << c.x << NEWLINE;
 		switch(directions[c.y][c.x]){
 			case NORTH:
-				c.y++;
-				q.push(c);
-				break;
-			case EAST:
-				c.x--;
-				q.push(c);
-				break;
-			case SOUTH:
 				c.y--;
 				q.push(c);
 				break;
-			case WEST:
+			case EAST:
 				c.x++;
+				q.push(c);
+				break;
+			case SOUTH:
+				c.y++;
+				q.push(c);
+				break;
+			case WEST:
+				c.x--;
 				q.push(c);
 				break;
 		}
 	}
+
 	while(!q.empty()){
 		std::cout << q.top().y + 1 << SPACE << q.top().x + 1 << NEWLINE;
 		q.pop();
@@ -174,18 +178,19 @@ int Grid::CostOfMoving(int y, int x, int direction){
 
 int Grid::Solve(){
 	Corner c;
-	c.y = iv;
-	c.x = ih;
+	c.y = ih;
+	c.x = iv;
 	c.soldiers_left = s;
 	hashed_queues[c.soldiers_left].push(c);
 	//Insert(c);
 	int i = 0, x, y, soldiers_left, soldiers_i = s;
 
-	while((soldiers_i > 0)  {
+	while(soldiers_i > 0){
 		x = hashed_queues[soldiers_i].front().x;
 		y = hashed_queues[soldiers_i].front().y;
 		soldiers_left = hashed_queues[soldiers_i].front().soldiers_left;
-
+		// std::cout << "====================================" << NEWLINE;
+		// std::cout << y << SPACE << x << SPACE << soldiers_left << SPACE << directions[y][x] << NEWLINE;
 		//move north
 		c.x = x;
 		c.y = y - 1;
@@ -198,9 +203,11 @@ int Grid::Solve(){
 			else
 				c.soldiers_left = soldiers_left - (CostOfMoving(y, x, NORTH) - soldiers_left);
 			if(c.soldiers_left > corners[c.y][c.x]){
+
 				corners[c.y][c.x] = c.soldiers_left;
-				directions[c.y][c.x] = NORTH;
+				directions[c.y][c.x] = SOUTH;
 				hashed_queues[c.soldiers_left].push(c);
+				// std::cout << c.y << SPACE << c.x << SPACE << c.soldiers_left << SPACE << directions[c.y][c.x] << NEWLINE;
 			}
 		}
 
@@ -216,8 +223,9 @@ int Grid::Solve(){
 				c.soldiers_left = soldiers_left - (CostOfMoving(y, x, SOUTH) - soldiers_left);
 			if(c.soldiers_left > corners[c.y][c.x]){
 				corners[c.y][c.x] = c.soldiers_left;
-				directions[c.y][c.x] = SOUTH;
+				directions[c.y][c.x] = NORTH;
 				hashed_queues[c.soldiers_left].push(c);
+				// std::cout << c.y << SPACE << c.x << SPACE << c.soldiers_left << SPACE << directions[c.y][c.x] << NEWLINE;
 			}
 		}
 		
@@ -233,8 +241,9 @@ int Grid::Solve(){
 				c.soldiers_left = soldiers_left - (CostOfMoving(y, x, EAST) - soldiers_left);
 			if(c.soldiers_left > corners[c.y][c.x]){
 				corners[c.y][c.x] = c.soldiers_left;
-				directions[c.y][c.x] = EAST;
+				directions[c.y][c.x] = WEST;
 				hashed_queues[c.soldiers_left].push(c);
+				// std::cout << c.y << SPACE << c.x << SPACE << c.soldiers_left << SPACE << directions[c.y][c.x] << NEWLINE;
 			}
 		}
 		
@@ -250,8 +259,9 @@ int Grid::Solve(){
 				c.soldiers_left = soldiers_left - (CostOfMoving(y, x, WEST) - soldiers_left);
 			if(c.soldiers_left > corners[c.y][c.x]){
 				corners[c.y][c.x] = c.soldiers_left;
-				directions[c.y][c.x] = WEST;
+				directions[c.y][c.x] = EAST;
 				hashed_queues[c.soldiers_left].push(c);
+				// std::cout << c.y << SPACE << c.x << SPACE << c.soldiers_left << SPACE << directions[c.y][c.x] << NEWLINE;
 			}
 		}
 		
@@ -260,5 +270,5 @@ int Grid::Solve(){
 			soldiers_i--;
 		}
 	}
-	return corners[bv][bh];
+	return corners[bh][bv];
 }

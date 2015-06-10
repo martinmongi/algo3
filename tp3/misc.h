@@ -40,7 +40,7 @@ vector<vector<bool> > graph_input(){
 	int a, b, vertices, edges;
 	cin >> vertices >> edges;
 	vector<vector<bool> > g(vertices, vector<bool>(vertices, false));
-
+	cerr << vertices << "; " << edges << "; ";
 	while(edges--){
 		cin >> a >> b;
 		a--; b--;

@@ -23,13 +23,13 @@ vector<bool> exact_solve(vector<vector<bool> > &g, vector<bool> v, int i){
 	}
 
 
-	// //pruning better_solution_already_found
-	// if(ub < v_count(v))
-	// 	return vector<bool>();
+	// pruning better_solution_already_found
+	if(ub < v_count(v))
+		return vector<bool>();
 
-	// // //pruning solution_already_dependent
-	// if(!independent(g,v))
-	// 	return vector<bool>();
+	// pruning solution_already_dependent
+	if(!independent(g,v))
+		return vector<bool>();
 
 	vector<bool> sol1 = exact_solve(g, v, i + 1);
 	v[i] = true; 
@@ -238,6 +238,8 @@ int main(int argc, char* argv[]){
 
 	vector<vector<bool> > g = graph_input();
 
+	vector<bool> result;
+
 	if(argc < 2){
 		arg_error(argv[0]);
 		return 0;
@@ -245,6 +247,7 @@ int main(int argc, char* argv[]){
 
 	string chosen_algorithm = string(argv[1]);
 
+	chrono::steady_clock::time_point t1 = chrono::steady_clock::now();
 
 	if(chosen_algorithm == "EXACT"){
 
@@ -252,30 +255,15 @@ int main(int argc, char* argv[]){
 
 		vector<bool> initial_guess(g.size(), false);
 
-		//Algorithm start
-		chrono::steady_clock::time_point t1 = chrono::steady_clock::now();
-
-		vector<bool> result = exact_solve(g, initial_guess, 0);
-
-		//Algorithm end
-		chrono::steady_clock::time_point t2 = chrono::steady_clock::now();
-
-		chrono::duration<double> time_span = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
-
-		cerr << time_span.count();
-		cerr << std::endl;		
-
-		print_result(result);
+		result = exact_solve(g, initial_guess, 0);		
 
 	} else if(chosen_algorithm == "GREEDY"){
 
-		vector<bool> result = greedy_solve(g);
-		
-		print_result(result);
+		result = greedy_solve(g);
 
 	} else if(chosen_algorithm == "LOCAL_SEARCH_NAIVE_1"){
 
-		vector<bool> result = naive_solve(g);
+		result = naive_solve(g);
 
 		vector<bool> aux;
 		int i = 0;
@@ -285,12 +273,10 @@ int main(int argc, char* argv[]){
 			aux = result;
 			result = local_search_1(g, result);
 		}while(aux != result);
-
-		print_result(result);
 
 	} else if(chosen_algorithm == "LOCAL_SEARCH_GREEDY_1"){
 
-		vector<bool> result = greedy_solve(g);
+		result = greedy_solve(g);
 
 		vector<bool> aux;
 		int i = 0;
@@ -301,11 +287,9 @@ int main(int argc, char* argv[]){
 			result = local_search_1(g, result);
 		}while(aux != result);
 
-		print_result(result);
-
 	} else if(chosen_algorithm == "LOCAL_SEARCH_NAIVE_2"){
 
-		vector<bool> result = naive_solve(g);
+		result = naive_solve(g);
 
 		vector<bool> aux;
 		int i = 0;
@@ -315,12 +299,10 @@ int main(int argc, char* argv[]){
 			aux = result;
 			result = local_search_2(g, result);
 		}while(aux != result);
-
-		print_result(result);
 
 	} else if(chosen_algorithm == "LOCAL_SEARCH_GREEDY_2"){
 
-		vector<bool> result = greedy_solve(g);
+		result = greedy_solve(g);
 
 		vector<bool> aux;
 		int i = 0;
@@ -331,13 +313,9 @@ int main(int argc, char* argv[]){
 			result = local_search_2(g, result);
 		}while(aux != result);
 
-		print_result(result);
-
 	} else if(chosen_algorithm == "NAIVE"){
 
-		vector<bool> result = naive_solve(g);
-
-		print_result(result);
+		result = naive_solve(g);
 
 	} else if(chosen_algorithm == "GRASP"){
 
@@ -356,15 +334,22 @@ int main(int argc, char* argv[]){
 
 		srand(time(NULL));
 
-		vector<bool> result = grasp_solve(g, p, iterations);
-
-		print_result(result);
+		result = grasp_solve(g, p, iterations);
 
 	}else{
 
 		arg_error(argv[0]);
 	
 	}
+
+	chrono::steady_clock::time_point t2 = chrono::steady_clock::now();
+
+	chrono::duration<double> time_span = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
+
+	cerr << time_span.count();
+	cerr << std::endl;		
+
+	print_result(result);
 
 	return 0;
 
