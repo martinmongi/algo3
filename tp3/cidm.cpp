@@ -236,14 +236,16 @@ vector<bool> grasp_solve(vector<vector<bool> > &g, double p, int iterations){
 
 int main(int argc, char* argv[]){
 
-	vector<vector<bool> > g = graph_input();
-
-	vector<bool> result;
+	
 
 	if(argc < 2){
 		arg_error(argv[0]);
 		return 0;
 	}
+
+	vector<bool> result;
+	
+	vector<vector<bool> > g = graph_input();
 
 	string chosen_algorithm = string(argv[1]);
 
@@ -346,8 +348,7 @@ int main(int argc, char* argv[]){
 
 	chrono::duration<double> time_span = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
 
-	cerr << time_span.count();
-	cerr << std::endl;		
+	//cerr << time_span.count() << std::endl;		
 
 	print_result(result);
 

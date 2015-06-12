@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cassert>
 #include <queue>
+#include <chrono>
 #include <stack>
 
 #define NORTH 0
@@ -23,8 +24,9 @@ public:
 	void PrintGrid();
 	void PrintCorners();
 	void PrintTrajectory();
+	int n, m, s;
 private:
-	int n, m, s, ih, iv, bh, bv;
+	int ih, iv, bh, bv;
 	std::vector<std::vector<int> > h_streets;
 	std::vector<std::vector<int> > v_streets;
 	std::vector<std::vector<int> > corners;
@@ -185,7 +187,7 @@ int Grid::Solve(){
 	//Insert(c);
 	int i = 0, x, y, soldiers_left, soldiers_i = s;
 
-	while(soldiers_i > 0){
+	while((soldiers_i > 0) || (c.x == bv) && (c.y == bh)){
 		x = hashed_queues[soldiers_i].front().x;
 		y = hashed_queues[soldiers_i].front().y;
 		soldiers_left = hashed_queues[soldiers_i].front().soldiers_left;
