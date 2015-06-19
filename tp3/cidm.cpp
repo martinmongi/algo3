@@ -271,6 +271,7 @@ int main(int argc, char* argv[]){
 		int i = 0;
 		
 		do{
+			cerr << i << endl;
 			i++;
 			aux = result;
 			result = local_search_1(g, result);
@@ -284,6 +285,7 @@ int main(int argc, char* argv[]){
 		int i = 0;
 		
 		do{
+			cerr << i << endl;
 			i++;
 			aux = result;
 			result = local_search_1(g, result);
@@ -297,6 +299,7 @@ int main(int argc, char* argv[]){
 		int i = 0;
 		
 		do{
+			cerr << i << endl;
 			i++;
 			aux = result;
 			result = local_search_2(g, result);
@@ -310,6 +313,7 @@ int main(int argc, char* argv[]){
 		int i = 0;
 		
 		do{
+			cerr << i << endl;
 			i++;
 			aux = result;
 			result = local_search_2(g, result);
