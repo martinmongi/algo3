@@ -8,6 +8,7 @@
 #include <algorithm>
 #include "misc.h"
 
+#define TAB '\t'
 using namespace std;
 int ub;
 
@@ -172,7 +173,7 @@ vector<bool> local_search_2(vector<vector<bool> > &g, vector<bool> v){
 
 vector<bool> greedy_randomized(vector<vector<bool> > &g, double p){
 
-	int potential_vertices, best_vertex;
+	int potential_vertices, best_vertex, rcl_size;
 	vector<pair<int, int> > vertex_value;
 	pair<int, int> buffer_pair;
 	vector<bool> taken(g.size(), false);
@@ -199,7 +200,14 @@ vector<bool> greedy_randomized(vector<vector<bool> > &g, double p){
 
 		sort(vertex_value.begin(), vertex_value.end(), compare_vertices);
 
-		best_vertex = vertex_value[rand() % (int)(vertex_value.size()*p + 1)].first;
+
+		rcl_size = vertex_value.size()*(1-p);
+
+		if(rcl_size == 0) rcl_size++;
+
+		int vertex_i = rand() % rcl_size;
+
+		best_vertex = vertex_value[vertex_i].first;
 
 		vertices[best_vertex] = true;
 		taken[best_vertex] = true;
@@ -271,7 +279,7 @@ int main(int argc, char* argv[]){
 		int i = 0;
 		
 		do{
-			cerr << i << endl;
+			//cerr << i << endl;
 			i++;
 			aux = result;
 			result = local_search_1(g, result);
@@ -283,13 +291,20 @@ int main(int argc, char* argv[]){
 
 		vector<bool> aux;
 		int i = 0;
+		double ts = 0;
 		
 		do{
-			cerr << i << endl;
+			//chrono::steady_clock::time_point t1 = chrono::steady_clock::now();
 			i++;
 			aux = result;
 			result = local_search_1(g, result);
+			//chrono::steady_clock::time_point t2 = chrono::steady_clock::now();
+			//chrono::duration<double> time_span = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
+			//ts = time_span.count();
+
 		}while(aux != result);
+
+		//cerr << g.size() <<  "; " << i <<  "; " << ts << endl;
 
 	} else if(chosen_algorithm == "LOCAL_SEARCH_NAIVE_2"){
 
@@ -299,7 +314,6 @@ int main(int argc, char* argv[]){
 		int i = 0;
 		
 		do{
-			cerr << i << endl;
 			i++;
 			aux = result;
 			result = local_search_2(g, result);
@@ -313,7 +327,7 @@ int main(int argc, char* argv[]){
 		int i = 0;
 		
 		do{
-			cerr << i << endl;
+
 			i++;
 			aux = result;
 			result = local_search_2(g, result);
@@ -352,7 +366,17 @@ int main(int argc, char* argv[]){
 
 	chrono::duration<double> time_span = chrono::duration_cast<chrono::duration<double>>(t2 - t1);
 
-	//cerr << time_span.count() << std::endl;		
+	int edges = 0, vertices;
+
+	vertices = g.size();
+
+	for(int i = 0; i < vertices; i++){
+		for(int j = i + 1; j < vertices; j++){
+			if(g[i][j])
+				edges++;
+		}
+	}
+	cerr << vertices << TAB << edges << TAB << time_span.count() << TAB << v_count(result) << std::endl;		
 
 	print_result(result);
 

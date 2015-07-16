@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+#Genera un grafo aleatorio con parametros n y p
+#Uso: ./generator.py n p
+#n = numero de vertices del grafo
+#p = probabilidad de que dos ejes del grafo esten conectados
+
 import sys
 import random
 

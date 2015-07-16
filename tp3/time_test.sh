@@ -1,18 +1,16 @@
 #!/bin/bash
 	
-	
-	
-	for p in `seq .0 0.05 1.0`;
+	for p in `seq .25 0.05 .25`;
 	do
-		for v in `seq 500 20 500`;
+		for v in `seq 1 1 100`;
 		do
+			
 			rm times.out
-			python3 ./tests/generator.py $v $p
-		    for i in `seq 1 20`;
+		    for i in `seq 1 100`;
 	        do
-	        		
+	        		./generator.py $v $p
 	                ./cidm GREEDY < test.in > /dev/null 2>> times.out
 	        done
-	        cat times.out | python3 time_average.py
+	        cat times.out | python3 average.py
 	    done
 	done
